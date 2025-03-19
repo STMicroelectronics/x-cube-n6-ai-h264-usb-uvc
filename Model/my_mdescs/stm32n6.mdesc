@@ -1,0 +1,25 @@
+{
+ "externals" : {
+     "mpool_name" : "stm32n6"
+ },
+ "machine": {
+  "name": "stm32n6",
+  "version": "0.0",
+  "fully_connected": "true",
+  "nominal_frequency": 1000,
+  "nominal_vdd": 0.8,
+  "frequency": 1000,
+  "vdd": 0.8,
+  "accelerators": [
+   { "index":  0, "num": 4, "version": "0.0", "power": 30.132, "type": "CONVACC" },
+   { "index":  0, "num": 2, "version": "0.0", "power": 9.09, "type": "POOL"    },
+   { "index":  0, "num": 4, "version": "0.0", "power": 5.877, "type": "ARITH"   },
+   { "index":  0, "num": 2, "version": "0.0", "power": 5.30, "type": "ACTIV"   },
+   { "index":  0, "num": 2, "version": "0.0", "power": 5.57, "type": "DECUN"   },
+   { "index":  0, "num": 1, "version": "0.0", "power": 5.57, "type": "RECBUF"   },
+   { "index":  0, "num": 5, "version": "0.0", "power": 5.331, "type": "STRENG", "params": [ { "name": "MEM_PORT", "val": 0 } ] },
+   { "index":  5, "num": 5, "version": "0.0", "power": 5.331, "type": "STRENG", "params": [ { "name": "MEM_PORT", "val": 1 } ] },
+   { "index":  0, "num": 1, "version": "0.0", "power": 200.0, "type": "PROCESSOR" }
+  ]
+ }
+}

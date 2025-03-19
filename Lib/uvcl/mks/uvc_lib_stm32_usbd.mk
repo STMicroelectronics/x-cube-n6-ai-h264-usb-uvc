@@ -1,0 +1,26 @@
+C_SOURCES_STM32_USBD += $(STM32_USBD_REL_DIR)/Core/Src/usbd_core.c
+C_SOURCES_STM32_USBD += $(STM32_USBD_REL_DIR)/Core/Src/usbd_ctlreq.c
+C_SOURCES_STM32_USBD += $(STM32_USBD_REL_DIR)/Core/Src/usbd_ioreq.c
+C_SOURCES_STM32_USBD += $(UVC_LIB_REL_DIR)/Src/usbd/uvcl_stm32_usbd.c
+C_SOURCES_STM32_USBD += $(UVC_LIB_REL_DIR)/Src/usbd/uvcl_stm32_usbd_conf.c
+
+C_INCLUDES_STM32_USBD += -I$(STM32_USBD_REL_DIR)/Core/Inc
+C_INCLUDES_STM32_USBD += -I$(UVC_LIB_REL_DIR)/Inc/usbd
+C_INCLUDES_STM32_USBD += -I$(UVC_LIB_REL_DIR)/Src/usbd
+
+C_DEFS_STM32_USBD += -DUVC_LIB_USE_STM32_USBD
+C_DEFS_STM32_USBD += -DUSE_USB_HS
+C_DEFS_STM32_USBD += -DUSBL_PACKET_PER_MICRO_FRAME=3
+
+# only standalone mode suppported / work done under irq
+ifeq ($(UVC_LIB_RTOS), NONE)
+# empty
+else ifeq  ($(UVC_LIB_RTOS), THREADX)
+C_DEFS_STM32_USBD += -DUVCL_USBD_USE_THREADX
+else
+$(error $(UVC_LIB_RTOS) is not supported)
+endif
+
+C_SOURCES += $(C_SOURCES_STM32_USBD)
+C_INCLUDES += $(C_INCLUDES_STM32_USBD)
+C_DEFS += $(C_DEFS_STM32_USBD)

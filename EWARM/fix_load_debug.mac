@@ -1,0 +1,24 @@
+execUserSetup()
+{
+    /* Disable RISAF2 */
+    __writeMemory32(0, 0x54028040, "Memory");
+    __writeMemory32(0, 0x54028080, "Memory");
+    __writeMemory32(0, 0x540280C0, "Memory");
+    __writeMemory32(0, 0x54028100, "Memory");
+    __writeMemory32(0, 0x54028140, "Memory");
+    __writeMemory32(0, 0x54028180, "Memory");
+    __writeMemory32(0, 0x540281C0, "Memory");
+
+    /* Disable SAU */
+    __writeMemory32(0, 0xe000edd0, "Memory");
+
+    /* Disable MPU */
+    __writeMemory32(0, 0xe000ed24, "Memory");
+
+    /* Re-load image partially erased by IAR reset */
+    __loadImage("$PROJ_DIR$\\Debug\\Exe\\x-cube-n6-ai-h264-usb-uvc.out", 0, 0);
+    #PC = __readMemory32(0x34000404, "Memory");
+    #SP = __readMemory32(0x34000400, "Memory");
+
+    __restoreSoftwareBreakpoints();
+}
