@@ -115,7 +115,7 @@ int32_t sseg_deeplabv3_pp_argmax(sseg_deeplabv3_pp_in_t *pInput,
         uint8_t *out = (uint8_t *)pOutput->pOutBuff;
         while(loop > 0)
         {
-            vision_models_maxi_p_if32ou8(pSrc, nb_classes, nb_classes, _maxim_a, out, 4);
+            vision_models_maxi_p_if32ou8(pSrc, nb_classes, nb_classes, _maxim_a, out, loop);
             pSrc+= 4*nb_classes;
             out += 4;
             loop-=4;
@@ -124,7 +124,7 @@ int32_t sseg_deeplabv3_pp_argmax(sseg_deeplabv3_pp_in_t *pInput,
         uint16_t *out = (uint16_t *)pOutput->pOutBuff;
         while(loop > 0)
         {
-            vision_models_maxi_p_if32ou16(pSrc, nb_classes, nb_classes, _maxim_a, (uint16_t *)out, 4);
+            vision_models_maxi_p_if32ou16(pSrc, nb_classes, nb_classes, _maxim_a, (uint16_t *)out, loop);
             pSrc+= 4*nb_classes;
             out += 4;
             loop-=4;
@@ -141,7 +141,7 @@ int32_t sseg_deeplabv3_pp_argmax(sseg_deeplabv3_pp_in_t *pInput,
         uint8_t *out = (uint8_t *)pOutput->pOutBuff;
         while(loop > 0)
         {
-            vision_models_maxi_p_iu8ou8(pSrc, nb_classes, nb_classes, _maxim_a, out, 16);
+            vision_models_maxi_p_iu8ou8(pSrc, nb_classes, nb_classes, _maxim_a, out, loop);
             pSrc+=16*nb_classes;
             out +=16;
             loop-=16;
@@ -150,8 +150,8 @@ int32_t sseg_deeplabv3_pp_argmax(sseg_deeplabv3_pp_in_t *pInput,
         uint16_t *out = (uint16_t *)pOutput->pOutBuff;
         while(loop > 0)
         {
-            vision_models_maxi_p_iu8ou16(pSrc, nb_classes, nb_classes, _maxim_a, out, 8);
-            pSrc+=8*nb_classes;
+            vision_models_maxi_p_iu8ou16(pSrc, nb_classes, nb_classes, _maxim_a, out, loop);
+           pSrc+=8*nb_classes;
             out +=8;
             loop-=8;
         }
@@ -167,7 +167,7 @@ int32_t sseg_deeplabv3_pp_argmax(sseg_deeplabv3_pp_in_t *pInput,
         uint8_t *out = (uint8_t *)pOutput->pOutBuff;
         while(loop > 0)
         {
-            vision_models_maxi_p_is8ou8(pSrc, nb_classes, nb_classes, _maxim_a, out, 16);
+            vision_models_maxi_p_is8ou8(pSrc, nb_classes, nb_classes, _maxim_a, out, loop);
             pSrc+=16*nb_classes;
             out +=16;
             loop-=16;
@@ -176,7 +176,7 @@ int32_t sseg_deeplabv3_pp_argmax(sseg_deeplabv3_pp_in_t *pInput,
         uint16_t *out = (uint16_t *)pOutput->pOutBuff;
         while(loop > 0)
         {
-            vision_models_maxi_p_is8ou16(pSrc, nb_classes, nb_classes, _maxim_a, out, 8);
+            vision_models_maxi_p_is8ou16(pSrc, nb_classes, nb_classes, _maxim_a, out, loop);
             pSrc+=8*nb_classes;
             out +=8;
             loop-=8;

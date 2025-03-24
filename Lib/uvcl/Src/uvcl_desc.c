@@ -586,12 +586,14 @@ static void build_uvc_fb_rgb565_fmt_desc(struct uvc_fb_fmt_desc *desc, UVCL_Desc
 
 static void build_uvc_fb_grey_fmt_desc(struct uvc_fb_fmt_desc *desc, UVCL_DescConf *p_conf)
 {
+  const uint8_t fb_grey_guid_l8[] = {0x32, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00,
+                 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71};
   const uint8_t fb_grey_guid[] = {'Y', '8', ' ', ' ', 0x00, 0x00, 0x10, 0x00,
                  0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71};
   int i;
 
   for (i = 0; i < 16; i++)
-    desc->raw.guidFormat[i] = fb_grey_guid[i];
+    desc->raw.guidFormat[i] = p_conf->payload_type == UVCL_PAYLOAD_FB_GREY ? fb_grey_guid[i] : fb_grey_guid_l8[i];
   desc->raw.bBitsPerPixel = 8;
   desc->raw.bVariableSize = 0;
 }
@@ -620,6 +622,18 @@ static void build_uvc_fb_bgr3_fmt_desc(struct uvc_fb_fmt_desc *desc, UVCL_DescCo
   desc->raw.bVariableSize = 0;
 }
 
+static void build_uvc_fb_jpeg_fmt_desc(struct uvc_fb_fmt_desc *desc, UVCL_DescConf *p_conf)
+{
+  const uint8_t fb_h264_guid[] = {'M', 'J', 'P', 'G', 0x00, 0x00, 0x10, 0x00,
+                 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71};
+  int i;
+
+  for (i = 0; i < 16; i++)
+    desc->raw.guidFormat[i] = fb_h264_guid[i];
+  desc->raw.bBitsPerPixel = 0;
+  desc->raw.bVariableSize = 1;
+}
+
 static void build_uvc_fb_fmt_desc(struct uvc_fb_fmt_desc *desc, struct uvc_desc_head *next,
                                        struct uvc_desc_head *parent, UVCL_DescConf *p_conf)
 {
@@ -644,6 +658,7 @@ static void build_uvc_fb_fmt_desc(struct uvc_fb_fmt_desc *desc, struct uvc_desc_
     build_uvc_fb_rgb565_fmt_desc(desc, p_conf);
     break;
   case UVCL_PAYLOAD_FB_GREY:
+  case UVCL_PAYLOAD_FB_GREY_D3DFMT_L8:
     build_uvc_fb_grey_fmt_desc(desc, p_conf);
     break;
   case UVCL_PAYLOAD_FB_H264:
@@ -651,6 +666,9 @@ static void build_uvc_fb_fmt_desc(struct uvc_fb_fmt_desc *desc, struct uvc_desc_
     break;
   case UVCL_PAYLOAD_FB_BGR3:
     build_uvc_fb_bgr3_fmt_desc(desc, p_conf);
+    break;
+  case UVCL_PAYLOAD_FB_JPEG:
+    build_uvc_fb_jpeg_fmt_desc(desc, p_conf);
     break;
   default:
     assert(0);
@@ -687,6 +705,13 @@ static void build_uvc_fb_bgr3_frame_desc(struct uvc_fb_frame_desc *desc, UVCL_De
   desc->raw.dwBytesPerLine = desc->raw.wWidth * 3;
 }
 
+static void build_uvc_fb_jpeg_frame_desc(struct uvc_fb_frame_desc *desc, UVCL_DescConf *p_conf)
+{
+  desc->raw.dwMinBitRate = desc->raw.wWidth * desc->raw.wHeight * p_conf->fps;
+  desc->raw.dwMaxBitRate = desc->raw.dwMinBitRate;
+  desc->raw.dwBytesPerLine = 0;
+}
+
 static void build_uvc_fb_frame_desc(struct uvc_fb_frame_desc *desc, struct uvc_desc_head *next,
                                          struct uvc_desc_head *parent, UVCL_DescConf *p_conf)
 {
@@ -711,6 +736,7 @@ static void build_uvc_fb_frame_desc(struct uvc_fb_frame_desc *desc, struct uvc_d
     build_uvc_fb_rgb565_frame_desc(desc, p_conf);
     break;
   case UVCL_PAYLOAD_FB_GREY:
+  case UVCL_PAYLOAD_FB_GREY_D3DFMT_L8:
     build_uvc_fb_grey_frame_desc(desc, p_conf);
     break;
   case UVCL_PAYLOAD_FB_H264:
@@ -718,6 +744,9 @@ static void build_uvc_fb_frame_desc(struct uvc_fb_frame_desc *desc, struct uvc_d
     break;
   case UVCL_PAYLOAD_FB_BGR3:
     build_uvc_fb_bgr3_frame_desc(desc, p_conf);
+    break;
+  case UVCL_PAYLOAD_FB_JPEG:
+    build_uvc_fb_jpeg_frame_desc(desc, p_conf);
     break;
   default:
     assert(0);
@@ -790,6 +819,14 @@ static int UVCL_build_fb_h264_configuration_desc(uint8_t *p_dst, int dst_len, UV
 }
 
 static int UVCL_build_fb_bgr3_configuration_desc(uint8_t *p_dst, int dst_len, UVCL_DescConf *p_conf)
+{
+  if (p_conf->is_hs)
+    return UVCL_build_hs_fb_configuration_desc(p_dst, dst_len, p_conf);
+  else
+    return UVCL_build_fs_fb_configuration_desc(p_dst, dst_len, p_conf);
+}
+
+static int UVCL_build_fb_jpeg_configuration_desc(uint8_t *p_dst, int dst_len, UVCL_DescConf *p_conf)
 {
   if (p_conf->is_hs)
     return UVCL_build_hs_fb_configuration_desc(p_dst, dst_len, p_conf);
@@ -874,6 +911,7 @@ int UVCL_get_configuration_desc(void *p_dst, int dst_len, UVCL_DescConf *p_conf)
     return UVCL_build_fb_rgb565_configuration_desc(p_dst, dst_len, p_conf);
     break;
   case UVCL_PAYLOAD_FB_GREY:
+  case UVCL_PAYLOAD_FB_GREY_D3DFMT_L8:
     return UVCL_build_fb_grey_configuration_desc(p_dst, dst_len, p_conf);
     break;
   case UVCL_PAYLOAD_FB_H264:
@@ -881,6 +919,9 @@ int UVCL_get_configuration_desc(void *p_dst, int dst_len, UVCL_DescConf *p_conf)
     break;
   case UVCL_PAYLOAD_FB_BGR3:
     return UVCL_build_fb_bgr3_configuration_desc(p_dst, dst_len, p_conf);
+    break;
+  case UVCL_PAYLOAD_FB_JPEG:
+    return UVCL_build_fb_jpeg_configuration_desc(p_dst, dst_len, p_conf);
     break;
   default:
     return -1;

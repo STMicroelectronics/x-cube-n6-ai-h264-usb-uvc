@@ -44,7 +44,6 @@
   * @param  pAppliHelpers: pointer to application helpers. The application helpers are used
   *         by the ISP to interact with the application. get/set sensor exp/gain/ and get sensor info are mandatory,
   *         while the other helpers are optional and can be set to NULL
-  * @param  pStatArea: pointer to statistic area used by the IQ algorithms.
   * @param  ISP_IQParamCacheInit: pointer to ISP sensors specific params.
   *         If NULL, then the statistic area IQ static parameter is used.
   * @retval ISP status
@@ -53,7 +52,6 @@ ISP_StatusTypeDef ISP_Init(ISP_HandleTypeDef *hIsp,
                            void *hDcmipp,
                            uint32_t CameraInstance,
                            ISP_AppliHelpersTypeDef *pAppliHelpers,
-                           ISP_StatAreaTypeDef *pStatArea,
                            const ISP_IQParamTypeDef *ISP_IQParamCacheInit)
 {
   ISP_StatusTypeDef ret;
@@ -102,11 +100,6 @@ ISP_StatusTypeDef ISP_Init(ISP_HandleTypeDef *hIsp,
      printf("INFO: GetSensorExposure helper function is not implemented\r\n");
      return ISP_ERR_APP_HELPER_UNDEFINED;
    }
-
-  if (pStatArea != NULL)
-  {
-    hIsp->statArea = *pStatArea;
-  }
 
   /* Initialize IQ param (read from non volatile memory) */
   ret = ISP_SVC_IQParam_Init(hIsp, ISP_IQParamCacheInit);
@@ -292,16 +285,15 @@ ISP_StatusTypeDef ISP_Start(ISP_HandleTypeDef *hIsp)
     }
   }
 
-  /* Configure statistic area (defined by the application or by an optional static configuration) */
-  /* Get its config from IQ params if it was not provided by the application at ISP_Init() */
+  /* Configure statistic area if not already configured by ISP_SetStatArea() */
   if ((hIsp->statArea.XSize == 0) || (hIsp->statArea.YSize == 0))
   {
-    hIsp->statArea = IQParamConfig->statAreaStatic;
-  }
-  ret = ISP_SVC_ISP_SetStatArea(hIsp, &hIsp->statArea);
-  if (ret != ISP_OK)
-  {
-    return ret;
+    /* Configure statistic area from IQ params */
+    ret = ISP_SVC_ISP_SetStatArea(hIsp, &IQParamConfig->statAreaStatic);
+    if (ret != ISP_OK)
+    {
+      return ret;
+    }
   }
 
   ret = ISP_SVC_ISP_SetGamma(hIsp, &IQParamConfig->gamma);
@@ -661,4 +653,20 @@ void ISP_IncDumpFrameId(ISP_HandleTypeDef *hIsp)
 uint32_t ISP_GetDumpFrameId(ISP_HandleTypeDef *hIsp)
 {
   return ISP_SVC_Misc_GetDumpFrameId(hIsp);
+}
+
+/**
+  * @brief  ISP_OutputMeta
+  *         Print out ISP Meta data for test or debug purpose
+  * @param  hIsp: ISP device handle
+  * @retval None
+  */
+void ISP_OutputMeta(ISP_HandleTypeDef *hIsp)
+{
+  extern ISP_MetaTypeDef Meta;
+
+  if (Meta.outputEnable)
+  {
+    printf("Meta[%ld]: L = %d, TG = %ld, G = %ld, E = %ld, CT = %ld\r\n", hIsp->MainPipe_FrameCount, Meta.averageL, Meta.exposureTarget, Meta.gain, Meta.exposure, Meta.colorTemp);
+  }
 }

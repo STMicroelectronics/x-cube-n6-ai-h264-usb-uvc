@@ -85,6 +85,7 @@ ISP_StatusTypeDef ISP_SVC_Sensor_SetTestPattern(ISP_HandleTypeDef *hIsp, ISP_Sen
 /* Misc services */
 ISP_StatusTypeDef ISP_SVC_Misc_IsDCMIPPReady(ISP_HandleTypeDef *hIsp);
 ISP_StatusTypeDef ISP_SVC_Misc_GetDCMIPPVersion(ISP_HandleTypeDef *hIsp, uint32_t *pMajRev, uint32_t *pMinRev);
+ISP_StatusTypeDef ISP_SVC_Misc_GetFirmwareConfig(ISP_FirmwareConfigTypeDef *pConfig);
 void ISP_SVC_Misc_IncMainFrameId(ISP_HandleTypeDef *hIsp);
 uint32_t ISP_SVC_Misc_GetMainFrameId(ISP_HandleTypeDef *hIsp);
 void ISP_SVC_Misc_IncAncillaryFrameId(ISP_HandleTypeDef *hIsp);
@@ -93,6 +94,10 @@ void ISP_SVC_Misc_IncDumpFrameId(ISP_HandleTypeDef *hIsp);
 uint32_t ISP_SVC_Misc_GetDumpFrameId(ISP_HandleTypeDef *hIsp);
 ISP_StatusTypeDef ISP_SVC_Misc_SetWBRefMode(ISP_HandleTypeDef *hIsp, uint32_t RefColorTemp);
 ISP_StatusTypeDef ISP_SVC_Misc_GetWBRefMode(ISP_HandleTypeDef *hIsp, uint32_t *pRefColorTemp);
+void ISP_SVC_Misc_SensorDelayMeasureStart();
+void ISP_SVC_Misc_SensorDelayMeasureStop();
+bool ISP_SVC_Misc_SensorDelayMeasureIsRunning();
+ISP_StatusTypeDef ISP_SVC_Misc_SendSensorDelayMeasure(ISP_HandleTypeDef *hIsp, ISP_SensorDelayTypeDef *pSensorDelay);
 ISP_StatusTypeDef ISP_SVC_Misc_StopPreview(ISP_HandleTypeDef *hIsp);
 ISP_StatusTypeDef ISP_SVC_Misc_StartPreview(ISP_HandleTypeDef *hIsp);
 bool ISP_SVC_Misc_IsGammaEnabled(ISP_HandleTypeDef *hIsp, uint32_t Pipe);

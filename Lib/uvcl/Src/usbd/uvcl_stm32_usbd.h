@@ -22,7 +22,7 @@
 #include "uvcl_internal.h"
 
 int UVCL_stm32_usbd_init(UVCL_Ctx_t *p_ctx, PCD_HandleTypeDef *pcd_handle, PCD_TypeDef *pcd_instance, UVCL_Conf_t *conf);
-#ifdef UVCL_USBD_USE_THREADX
+#if defined(UVCL_USBD_USE_THREADX) || defined(UVCL_USBD_USE_FREERTOS)
 void UVCL_stm32_usbd_IRQHandler();
 #endif
 

@@ -19,6 +19,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "isp_core.h"
 #include "isp_services.h"
+#ifdef ISP_MW_TUNING_TOOL_SUPPORT
+#include "isp_cmd_parser.h"
+#endif
 
 /* Private types -------------------------------------------------------------*/
 typedef enum {
@@ -63,6 +66,13 @@ typedef struct {
 } ISP_SVC_StatEngineTypeDef;
 
 /* Private constants ---------------------------------------------------------*/
+#define ISP_SVC_CONFIG_ORDER_RGB      0
+#define ISP_SVC_CONFIG_ORDER_BGR      1
+
+#define ISP_SVC_CONFIG_DEVICE_N6      0x00000000
+#define ISP_SVC_CONFIG_DEVICE_MP25    0x00000001
+#define ISP_SVC_CONFIG_DEVICE_UNKNOWN 0xFFFFFFFF
+
 /* Private macro -------------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 static void To_Shift_Multiplier(uint32_t Factor, uint8_t *pShift, uint8_t *pMultiplier);
@@ -75,6 +85,7 @@ static uint32_t ISP_ManualWBRefColorTemp = 0;
 static ISP_DecimationTypeDef ISP_DecimationValue = {ISP_DECIM_FACTOR_1};
 static ISP_IQParamTypeDef ISP_IQParamCache;
 static ISP_SVC_StatEngineTypeDef ISP_SVC_StatEngine;
+static bool ISP_SensorDelayMeasureRun;
 
 static const uint32_t avgRGBUp[] = {
     DCMIPP_STAT_EXT_SOURCE_PRE_BLKLVL_R, DCMIPP_STAT_EXT_SOURCE_PRE_BLKLVL_G, DCMIPP_STAT_EXT_SOURCE_PRE_BLKLVL_B
@@ -133,6 +144,7 @@ static const DCMIPP_StatisticExtractionConfTypeDef statConfDownBins_9_11 = {
 };
 
 /* Exported variables --------------------------------------------------------*/
+extern ISP_MetaTypeDef Meta;
 
 /* Private functions ---------------------------------------------------------*/
 static void To_Shift_Multiplier(uint32_t Factor, uint8_t *pShift, uint8_t *pMultiplier)
@@ -712,6 +724,9 @@ ISP_StatusTypeDef ISP_SVC_ISP_SetStatArea(ISP_HandleTypeDef *hIsp, ISP_StatAreaT
     return ISP_ERR_STATAREA_HAL;
   }
 
+  /* Update internal state */
+  hIsp->statArea = *pConfig;
+
   return ret;
 }
 
@@ -1111,6 +1126,8 @@ ISP_StatusTypeDef ISP_SVC_Sensor_SetGain(ISP_HandleTypeDef *hIsp, ISP_SensorGain
     }
   }
 
+  Meta.gain = pConfig->gain;
+
   return ISP_OK;
 }
 
@@ -1162,6 +1179,8 @@ ISP_StatusTypeDef ISP_SVC_Sensor_SetExposure(ISP_HandleTypeDef *hIsp, ISP_Sensor
       return ISP_ERR_SENSOREXPOSURE;
     }
   }
+
+  Meta.exposure = pConfig->exposure;
 
   return ISP_OK;
 }
@@ -1266,6 +1285,46 @@ ISP_StatusTypeDef ISP_SVC_Misc_IsDCMIPPReady(ISP_HandleTypeDef *hIsp)
 }
 
 /**
+  * @brief  ISP_SVC_Misc_GetFirmwareConfig
+  *         Return the firmware config
+  * @param  pConfig: Pointer to the firmware config
+  * @retval operation result
+  */
+ISP_StatusTypeDef ISP_SVC_Misc_GetFirmwareConfig(ISP_FirmwareConfigTypeDef *pConfig)
+{
+  uint32_t devId;
+
+  /* Number of supported fields (RGBOrder, HasStatRemoval, etc..). */
+  pConfig->nbField = 7;
+  /* RGB Order is BGR (1) on STM32N6 and more generally on any MCU using DCMIPP HAL */
+  pConfig->rgbOrder = ISP_SVC_CONFIG_ORDER_BGR;
+  /* StatRemoval, GammaCorrection and AEC antiflickering support status */
+  pConfig->hasStatRemoval = 1;
+  pConfig->hasGamma = 1;
+  pConfig->hasAntiFlicker = 1;
+  /* DevideId */
+  switch(HAL_GetDEVID())
+  {
+  case 0x00006200: /* STM32N645xx */
+  case 0x00006000: /* STM32N655xx */
+  case 0x00002200: /* STM32N647xx */
+  case 0x00002000: /* STM32N657xx */
+    devId = ISP_SVC_CONFIG_DEVICE_N6;
+    break;
+  default:
+    devId = ISP_SVC_CONFIG_DEVICE_UNKNOWN;
+  }
+  pConfig->deviceId = devId;
+  /* UID */
+  pConfig->uId[0] = HAL_GetUIDw0();
+  pConfig->uId[1] = HAL_GetUIDw1();
+  pConfig->uId[2] = HAL_GetUIDw2();
+  /* Sensor Delay support status */
+  pConfig->hasSensorDelay = 1;
+  return ISP_OK;
+}
+
+/**
   * @brief  ISP_SVC_Misc_IncMainFrameId
   *         Increment the id of the frame output on the main pipe
   * @param  hIsp: ISP device handle
@@ -1361,6 +1420,55 @@ ISP_StatusTypeDef ISP_SVC_Misc_GetWBRefMode(ISP_HandleTypeDef *hIsp, uint32_t *p
   *pRefColorTemp = ISP_ManualWBRefColorTemp;
 
   return ISP_OK;
+}
+
+/**
+  * @brief  ISP_SVC_Misc_SensorDelayMeasureStart
+  *         Start the sensor delay measure
+  * @param  None
+  * @retval None
+  */
+void ISP_SVC_Misc_SensorDelayMeasureStart()
+{
+  ISP_SensorDelayMeasureRun = true;
+}
+
+/**
+  * @brief  ISP_SVC_Misc_SensorDelayMeasureStop
+  *         Stop the sensor delay measure
+  * @param  None
+  * @retval None
+  */
+void ISP_SVC_Misc_SensorDelayMeasureStop()
+{
+  ISP_SensorDelayMeasureRun = false;
+}
+
+/**
+  * @brief  ISP_SVC_Misc_SensorDelayMeasureIsRunning
+  *         Return the sensor delay measure status
+  * @param  None
+  * @retval true if the sensor delay measure is running
+  */
+bool ISP_SVC_Misc_SensorDelayMeasureIsRunning()
+{
+  return ISP_SensorDelayMeasureRun;
+}
+
+/**
+  * @brief  ISP_SVC_Misc_SendSensorDelayMeasure
+  *         Send the answer to the Get SensorDelay measure command
+  * @param  hIsp: ISP device handle
+  * @param  pSensorDelay: Pointer to the measured Sensor Delay
+  * @retval operation result
+  */
+ISP_StatusTypeDef ISP_SVC_Misc_SendSensorDelayMeasure(ISP_HandleTypeDef *hIsp, ISP_SensorDelayTypeDef *pSensorDelay)
+{
+#ifdef ISP_MW_TUNING_TOOL_SUPPORT
+  return ISP_CmdParser_SendSensorDelayMeasure(hIsp, pSensorDelay);
+#else
+  return ISP_OK;
+#endif
 }
 
 /**

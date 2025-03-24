@@ -48,12 +48,11 @@ C_SOURCES += Src/main.c
 C_SOURCES += Src/app.c
 C_SOURCES += Src/draw.c
 C_SOURCES += Src/app_enc.c
-C_SOURCES += Src/app_postprocess.c
 C_SOURCES += Src/app_fuseprogramming.c
 C_SOURCES += Src/stm32n6xx_it.c
 C_SOURCES += Model/network.c
 C_SOURCES += Src/app_cam.c
-C_SOURCES += Src/threadx_hal.c
+C_SOURCES += Src/freertos_bsp.c
 
 # ASM sources
 ASM_SOURCES =
@@ -141,13 +140,13 @@ all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET
 include mks/fw.mk
 include mks/ai.mk
 include mks/cmw.mk
-include mks/threadx.mk
+include mks/freertos.mk
 include mks/gcc.mk
 include mks/iar.mk
 include mks/venc.mk
 UVC_LIB_REL_DIR := Lib/uvcl
 UVC_LIB_USB_DEVICE_STACK := USBX
-UVC_LIB_RTOS := THREADX
+UVC_LIB_RTOS := FREERTOS
 UVC_LIB_USE_DMA := YES
 USBX_REL_DIR := $(FW_REL_DIR)/Middlewares/ST/usbx
 include Lib/uvcl/uvc_lib.mk

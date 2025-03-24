@@ -119,8 +119,8 @@ int32_t iseg_yolov8_pp_scoreFiltering_centroid_is8(yolov8_seg_pp_in_centroid_int
   float32_t mask_scale = pInput_static_param->mask_raw_output_scale;
   int8_t raw_zp = pInput_static_param->raw_output_zero_point;
   float32_t raw_scale = pInput_static_param->raw_output_scale;
-  int8_t threshold_s8 = (int8_t)(pInput_static_param->conf_threshold / raw_scale + 0.5 + raw_zp);
-  float32_t threshold_check = 0.5 / (mask_scale * raw_scale);
+  int8_t threshold_s8 = (int8_t)(pInput_static_param->conf_threshold / raw_scale + 0.5f + raw_zp);
+  float32_t threshold_check = 0.5f / (mask_scale * raw_scale);
   int32_t threshold_check_s32 = (int32_t)(threshold_check+0.5f);
 #ifdef ARM_MATH_MVEF
   uint32x4_t offset = vidupq_n_u32(0,1);
@@ -222,7 +222,7 @@ int32_t iseg_yolov8_pp_getNNBoxes_centroid_is8os8(yolov8_seg_pp_in_centroid_int8
   int8_t *pRaw_detections = (int8_t *)pInput->pRaw_detections;
   int8_t zero_point = pInput_static_param->raw_output_zero_point;
   float32_t scale = pInput_static_param->raw_output_scale;
-  int8_t threshold_s8 = (int8_t)(pInput_static_param->conf_threshold / scale + 0.5 + zero_point);
+  int8_t threshold_s8 = (int8_t)(pInput_static_param->conf_threshold / scale + 0.5f + zero_point);
 
   pInput_static_param->nb_detect = 0;
   int32_t loop_cnt = nb_total_boxes;

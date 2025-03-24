@@ -25,6 +25,7 @@ C_SOURCES_FW += $(FW_REL_DIR)/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pcd
 C_SOURCES_FW += $(FW_REL_DIR)/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pcd_ex.c
 C_SOURCES_FW += $(FW_REL_DIR)/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_ll_usb.c
 C_SOURCES_FW += $(FW_REL_DIR)/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_exti.c
+C_SOURCES_FW += $(FW_REL_DIR)/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_tim.c
 C_SOURCES_FW += $(FW_REL_DIR)/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery.c
 C_SOURCES_FW += $(FW_REL_DIR)/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.c
 C_SOURCES_FW += $(FW_REL_DIR)/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_xspi.c

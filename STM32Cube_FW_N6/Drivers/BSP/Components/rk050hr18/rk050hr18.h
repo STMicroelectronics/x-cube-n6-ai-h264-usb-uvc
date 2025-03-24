@@ -61,11 +61,11 @@ extern "C" {
   * @brief  RK050HR18 Timing
   */
 #define  RK050HR18_HSYNC            ((uint16_t)4)   /* Horizontal synchronization */
-#define  RK050HR18_HBP              ((uint16_t)8)   /* Horizontal back porch      */
-#define  RK050HR18_HFP              ((uint16_t)8)   /* Horizontal front porch     */
+#define  RK050HR18_HBP              ((uint16_t)4)   /* Horizontal back porch      */
+#define  RK050HR18_HFP              ((uint16_t)4)   /* Horizontal front porch     */
 #define  RK050HR18_VSYNC            ((uint16_t)4)   /* Vertical synchronization   */
-#define  RK050HR18_VBP              ((uint16_t)8)   /* Vertical back porch        */
-#define  RK050HR18_VFP              ((uint16_t)8)   /* Vertical front porch       */
+#define  RK050HR18_VBP              ((uint16_t)4)   /* Vertical back porch        */
+#define  RK050HR18_VFP              ((uint16_t)4)   /* Vertical front porch       */
 
 /**
   * @}

@@ -30,6 +30,8 @@
 #define UVCL_PAYLOAD_FB_BGR3 3
 #define UVCL_PAYLOAD_FB_GREY 4
 #define UVCL_PAYLOAD_FB_H264 5
+#define UVCL_PAYLOAD_FB_JPEG 6
+#define UVCL_PAYLOAD_FB_GREY_D3DFMT_L8 7
 
 typedef struct {
   int width;

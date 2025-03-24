@@ -17,6 +17,8 @@ ifeq ($(UVC_LIB_RTOS), NONE)
 # empty
 else ifeq  ($(UVC_LIB_RTOS), THREADX)
 C_DEFS_STM32_USBD += -DUVCL_USBD_USE_THREADX
+else ifeq  ($(UVC_LIB_RTOS), FREERTOS)
+C_DEFS_STM32_USBD += -DUVCL_USBD_USE_FREERTOS
 else
 $(error $(UVC_LIB_RTOS) is not supported)
 endif

@@ -1250,7 +1250,7 @@ __weak HAL_StatusTypeDef MX_XSPI_RAM_Init(XSPI_HandleTypeDef *hxspi, MX_XSPI_Ini
   hxspi->Init.MemoryMode                 = HAL_XSPI_SINGLE_MEM;
   hxspi->Init.MemorySize                 = Init->MemorySize;
   hxspi->Init.MemorySelect               = HAL_XSPI_CSSEL_NCS1;
-  hxspi->Init.ChipSelectHighTimeCycle    = 1;
+  hxspi->Init.ChipSelectHighTimeCycle    = 5;
   hxspi->Init.ClockMode                  = HAL_XSPI_CLOCK_MODE_0;
   hxspi->Init.ClockPrescaler             = Init->ClockPrescaler;
   hxspi->Init.SampleShifting             = Init->SampleShifting;
@@ -1548,7 +1548,7 @@ static void XSPI_NOR_MspInit(const XSPI_HandleTypeDef *hxspi)
   GPIO_InitStruct.Pin       = XSPI_NOR_CS_PIN;
   GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
   GPIO_InitStruct.Pull      = GPIO_PULLUP;
-  GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_HIGH;
+  GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_VERY_HIGH;
   GPIO_InitStruct.Alternate = XSPI_NOR_CS_PIN_AF;
   HAL_GPIO_Init(XSPI_NOR_CS_GPIO_PORT, &GPIO_InitStruct);
 

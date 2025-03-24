@@ -102,6 +102,11 @@ typedef struct evision_st_ae_hyper_param {
    * <b>Restrictions:</b> >= 0 AND < 256. <br/>
    * <b>Default value:</b> 5 */
   uint32_t dark_zone_lum_limit;
+  /*! @brief
+   *  Compatible light frequency in Hz to avoid flickering effect. <br/>
+   * <b>Restrictions:</b> >= 0 (None) AND < 256. <br/>
+   * <b>Default value:</b> 0 (None) */
+  uint32_t compat_freq;
 
 } evision_st_ae_hyper_param_t;
 
@@ -163,6 +168,7 @@ typedef struct evision_st_ae_process_t {
 #define EVISION_ST_DEFAULT_EXPOSURE_MAX         33000   /* Default value for expsoure max */
 #define EVISION_ST_DEFAULT_GAIN_MIN             1       /* Default value for gain min */
 #define EVISION_ST_DEFAULT_GAIN_MAX             100     /* Default value for gain max */
+#define EVISION_ST_DEFAULT_COMPAT_FREQ          0       /* Default value for compatible frequency */
 
 
 /* Exported macro ------------------------------------------------------------*/
@@ -206,9 +212,9 @@ evision_return_t evision_api_st_ae_init(evision_st_ae_process_t* const self);
  * @brief Run the ae process to calculate new gain and expsoure
  *
  * @param[in, out] self Concerned process instance address.
- * @param[in] image The current frame.
- * @param[in] use_ext_lum Flag to indicate the use of external AE measurements: 0 - use internal AE measurement, any other valid value - use external measurement.
- * @param[in] ext_lum External AE luminance measurement value. Range should normally be between 0 (completely dark image) and 255 (completely white image).
+ * @param[in] current_gain Current sensor gain in mdB.
+ * @param[in] current_exposure Current sensor exposure microsecond.
+ * @param[in] average_lum Average luminance measurement value. Range should normally be between 0 (completely dark image) and 255 (completely white image).
  *
  * @return
  * - EVISION_RET_SUCCESS

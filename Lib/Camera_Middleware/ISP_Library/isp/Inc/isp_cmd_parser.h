@@ -27,5 +27,6 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 ISP_StatusTypeDef ISP_CmdParser_ProcessCommand(ISP_HandleTypeDef *hIsp, uint8_t *cmd);
+ISP_StatusTypeDef ISP_CmdParser_SendSensorDelayMeasure(ISP_HandleTypeDef *hIsp, ISP_SensorDelayTypeDef *pSensorDelay);
 
 #endif

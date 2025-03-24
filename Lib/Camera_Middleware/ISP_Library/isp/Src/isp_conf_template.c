@@ -27,7 +27,6 @@
 /* Private function prototypes -----------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 extern ISP_HandleTypeDef hIsp;
-
 /* Private functions ---------------------------------------------------------*/
 
 /**
@@ -45,6 +44,7 @@ void HAL_DCMIPP_PIPE_VsyncEventCallback(DCMIPP_HandleTypeDef *hdcmipp, uint32_t 
     /* Call the IPS statistics handler */
     ISP_IncMainFrameId(&hIsp);
     ISP_GatherStatistics(&hIsp);
+    ISP_OutputMeta(&hIsp);
   }
   /* Additional applicative processing can be implemented from here */
 }

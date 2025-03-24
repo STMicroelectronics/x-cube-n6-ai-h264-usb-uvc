@@ -24,30 +24,10 @@ int32_t movenet_heatmap_max(spe_movenet_pp_in_t *pInput,
   uint32_t index;
   uint32_t width = pInput_static_param->heatmap_width;
   uint32_t height = pInput_static_param->heatmap_height;
-#ifdef _OLD_IMPL
-  float32_t *pTmpHeatMap = pInput_static_param->pTmpHeatMap;
-#endif
   float32_t *pInputKp = pInput->inBuff;
 
   for (i = 0; i < pInput_static_param->nb_keypoints; i++)
   {
-#ifdef _OLD_IMPL
-     /* De-interleaves the heat maps */
-     pTmpHeatMap = pInput_static_param->pTmpHeatMap;
-     pInputKp = &(pInput->inBuff[i]);
-     for (uint32_t hm = 0; hm < (width * height); hm++)
-     {
-       *pTmpHeatMap++ = *pInputKp;
-       pInputKp += pInput_static_param->nb_keypoints;
-     }
-
-     /* Computes the argmax on the temporary heat map */
-     pTmpHeatMap = pInput_static_param->pTmpHeatMap;
-     vision_models_maxi_if32ou32((float32_t *) pTmpHeatMap,
-                        (uint32_t) width * height,
-                        (float32_t *) &proba,
-                        (uint32_t *) &index);
-#else
 
     pInputKp = &(pInput->inBuff[i]);
     vision_models_maxi_tr_if32ou32((float32_t *) pInputKp,
@@ -55,7 +35,6 @@ int32_t movenet_heatmap_max(spe_movenet_pp_in_t *pInput,
                                    pInput_static_param->nb_keypoints,
                                    (float32_t *) &proba,
                                    (uint32_t *) &index);
-#endif
 
     /* This is not cartesian referential, to be aligned with Python code */
     y_center = ((index % height + 0.5f) / height);

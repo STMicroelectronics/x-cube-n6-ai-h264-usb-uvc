@@ -21,6 +21,12 @@
   @endverbatim
 
 
+### 17-December-2024 ###
+=========================
+  + Prevent infinite loop in case of encoding timeout
+     in \source\h264\H264CodeFrame.c
+
+
 ### 22-October-2024 ###
 =========================
   + Add fuse error handling 

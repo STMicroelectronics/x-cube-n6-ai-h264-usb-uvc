@@ -36,6 +36,13 @@
 #define AI_YOLOV8_PP_CLASSID      (5)
 #define AI_YOLOV8_PP_BOX_STRIDE   (4)
 
+/*-----------------------------     YOLO_V4      -----------------------------*/
+/* Offsets to access YoloV4 input data */
+#define AI_YOLOV4_PP_XMIN      (0)
+#define AI_YOLOV4_PP_YMIN      (1)
+#define AI_YOLOV4_PP_XMAX      (2)
+#define AI_YOLOV4_PP_YMAX      (3)
+
 /*-----------------------------     YOLO_V5      -----------------------------*/
 /* Offsets to access YoloV5 input data */
 #define AI_YOLOV5_PP_XCENTER      (0)

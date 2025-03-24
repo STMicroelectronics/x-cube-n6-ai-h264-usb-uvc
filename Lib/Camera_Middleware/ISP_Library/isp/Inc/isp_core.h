@@ -329,11 +329,19 @@ typedef enum
   EXPOSURE_TARGET_PLUS_2_0_EV  =  4,
 } ISP_ExposureCompTypeDef;
 
+typedef enum
+{
+  ANTIFLICKER_NONE = 0,
+  ANTIFLICKER_50HZ = 50,
+  ANTIFLICKER_60HZ = 60,
+} ISP_AntiFlickerTypeDef;
+
 typedef struct
 {
   uint8_t enable;                               /* Enable or disable */
   ISP_ExposureCompTypeDef exposureCompensation; /* Exposure Compensation (in EV) */
   uint32_t exposureTarget;                      /* Exposure Target */
+  ISP_AntiFlickerTypeDef antiFlickerFreq;       /* AntiFlicker frequency (50Hz, 60Hz  or 0 for disabling the feature */
 } ISP_AECAlgoTypeDef;
 
 #define ISP_AWB_COLORTEMP_REF               (5U)
@@ -379,6 +387,36 @@ typedef struct
   uint32_t histogram[12];     /* Histogram of the L, R, G or B component */
 } ISP_StatisticsTypeDef;
 
+/* Sensor delay */
+typedef struct
+{
+  uint8_t delay;              /* Sensor delay */
+} ISP_SensorDelayTypeDef;
+
+/* Firmware config. Warning : to add a new member, append it (at then end), never insert it in the middle (or you will die) */
+typedef struct
+{
+  uint32_t nbField;           /* Number of valid fields after that one in this structure */
+  uint32_t rgbOrder;          /* RGB components order in the RGB24 pixel format (0:RGB - 1:BGR) */
+  uint32_t hasStatRemoval;    /* Whether the firmware supports the StatRemoval feature */
+  uint32_t hasGamma;          /* Whether the firmware supports the Gamma Correction feature */
+  uint32_t hasAntiFlicker;    /* Whether the firmware supports the AEC anti flickering feature */
+  uint32_t deviceId;          /* Device Identifier (0:N6 - 1:MP25) */
+  uint32_t uId[3];            /* Unique Identifier (3 x 32 bits) */
+  uint32_t hasSensorDelay;    /* Whether the firmware supports the Sensor Delay feature */
+} ISP_FirmwareConfigTypeDef;
+
+/* Meta data will transit through STLINK if validation test is enabled */
+typedef struct
+{
+  uint8_t outputEnable;
+  uint8_t averageL;
+  uint32_t exposureTarget;
+  uint32_t gain;              /* Gain in mdB */
+  uint32_t exposure;          /* Exposure time in micro seconds */
+  uint32_t colorTemp;
+} ISP_MetaTypeDef;
+
 /* IQ parameter */
 typedef struct
 {
@@ -396,6 +434,7 @@ typedef struct
   ISP_ISPGainTypeDef ispGainStatic;
   ISP_ColorConvTypeDef colorConvStatic;
   ISP_GammaTypeDef gamma;
+  ISP_SensorDelayTypeDef sensorDelay;
 } ISP_IQParamTypeDef;
 
 /* Exported constants --------------------------------------------------------*/

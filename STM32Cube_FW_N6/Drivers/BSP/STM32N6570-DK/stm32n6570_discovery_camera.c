@@ -200,7 +200,9 @@ int32_t BSP_CAMERA_Init(uint32_t Instance, uint32_t Resolution, uint32_t PixelFo
 {
   int32_t ret = BSP_ERROR_NONE;
   ISP_AppliHelpersTypeDef appliHelpers = {0};
-  ISP_StatAreaTypeDef statArea = {0};
+  static const ISP_IQParamTypeDef* ISP_IQParamCacheInit[] = {
+    &ISP_IQParamCacheInit_IMX335
+   };
   if (Instance >= CAMERA_INSTANCES_NBR)
   {
     ret = BSP_ERROR_WRONG_PARAM;
@@ -294,12 +296,8 @@ int32_t BSP_CAMERA_Init(uint32_t Instance, uint32_t Resolution, uint32_t PixelFo
               appliHelpers.SetSensorExposure = BSP_SetSensorExposureHelper;
               appliHelpers.GetSensorExposure = BSP_GetSensorExposureHelper;
 
-              statArea.X0 = 0;
-              statArea.Y0 = 0;
-              statArea.XSize = 2592;
-              statArea.YSize = 1944;
               /* Initialize the Image Signal Processing middleware */
-              if(ISP_Init(&hcamera_isp, &hcamera_dcmipp, 0, &appliHelpers, &statArea, ISP_IQParamCacheInit[0]) != ISP_OK)
+              if(ISP_Init(&hcamera_isp, &hcamera_dcmipp, 0, &appliHelpers, ISP_IQParamCacheInit[0]) != ISP_OK)
               {
                 ret = BSP_ERROR_PERIPH_FAILURE;
               }
@@ -598,6 +596,70 @@ int32_t BSP_CAMERA_Start(uint32_t Instance, uint8_t *pbuff, uint32_t Mode)
 }
 
 /**
+  * @brief  Starts the camera capture in the selected mode using planar mode
+  * @param  Instance Camera instance.
+  * @param  pbuff     pointer to the camera output buffer
+  * @param  Mode CAMERA_MODE_CONTINUOUS or CAMERA_MODE_SNAPSHOT
+  * @retval BSP status
+  */
+int32_t BSP_CAMERA_FullPlanarStart(uint32_t Instance, DCMIPP_FullPlanarDstAddressTypeDef *pbuff, uint32_t Mode)
+{
+  int32_t ret = BSP_ERROR_NONE;
+
+  if (Instance >= CAMERA_INSTANCES_NBR)
+  {
+    ret = BSP_ERROR_WRONG_PARAM;
+  }
+  else if (HAL_DCMIPP_CSI_PIPE_FullPlanarStart(&hcamera_dcmipp, DCMIPP_PIPE1, DCMIPP_VIRTUAL_CHANNEL0, pbuff, Mode) != HAL_OK)
+  {
+    ret = BSP_ERROR_PERIPH_FAILURE;
+  }
+  else
+  {
+    /* No action */
+  }
+  /* Start the Image Signal Processing */
+  if (ISP_Start(&hcamera_isp) != ISP_OK)
+  {
+    ret = BSP_ERROR_COMPONENT_FAILURE;
+  }
+  /* Return BSP status */
+  return ret;
+}
+
+/**
+  * @brief  Starts the camera capture in the selected mode using semi-planar mode
+  * @param  Instance Camera instance.
+  * @param  pbuff     pointer to the camera output buffer
+  * @param  Mode CAMERA_MODE_CONTINUOUS or CAMERA_MODE_SNAPSHOT
+  * @retval BSP status
+  */
+int32_t BSP_CAMERA_SemiPlanarStart(uint32_t Instance, DCMIPP_SemiPlanarDstAddressTypeDef *pbuff, uint32_t Mode)
+{
+  int32_t ret = BSP_ERROR_NONE;
+
+  if (Instance >= CAMERA_INSTANCES_NBR)
+  {
+    ret = BSP_ERROR_WRONG_PARAM;
+  }
+  else if (HAL_DCMIPP_CSI_PIPE_SemiPlanarStart(&hcamera_dcmipp, DCMIPP_PIPE1, DCMIPP_VIRTUAL_CHANNEL0, pbuff, Mode) != HAL_OK)
+  {
+    ret = BSP_ERROR_PERIPH_FAILURE;
+  }
+  else
+  {
+    /* No action */
+  }
+  /* Start the Image Signal Processing */
+  if (ISP_Start(&hcamera_isp) != ISP_OK)
+  {
+    ret = BSP_ERROR_COMPONENT_FAILURE;
+  }
+  /* Return BSP status */
+  return ret;
+}
+
+/**
   * @brief  Starts the camera capture in selected mode.
   * @param  Instance Camera instance.
   * @param  pbuff1     pointer to the camera first output buffer
@@ -614,6 +676,72 @@ int32_t BSP_CAMERA_DoubleBufferStart(uint32_t Instance, uint8_t *pbuff1, uint8_t
     ret = BSP_ERROR_WRONG_PARAM;
   }
   else if (HAL_DCMIPP_CSI_PIPE_DoubleBufferStart(&hcamera_dcmipp, DCMIPP_PIPE1,DCMIPP_VIRTUAL_CHANNEL0, (uint32_t)pbuff1, (uint32_t)pbuff2, Mode) != HAL_OK)
+  {
+    ret = BSP_ERROR_PERIPH_FAILURE;
+  }
+  else
+  {
+    /* No action */
+  }
+  /* Start the Image Signal Processing */
+  if (ISP_Start(&hcamera_isp) != ISP_OK)
+  {
+    ret = BSP_ERROR_COMPONENT_FAILURE;
+  }
+  /* Return BSP status */
+  return ret;
+}
+
+/**
+  * @brief  Starts the camera capture in selected mode using planar.
+  * @param  Instance Camera instance.
+  * @param  pbuff1     pointer to the camera first output buffer
+  * @param  pbuff2     pointer to the camera second output buffer
+  * @param  Mode CAMERA_MODE_CONTINUOUS or CAMERA_MODE_SNAPSHOT
+  * @retval BSP status
+  */
+int32_t BSP_CAMERA_FullPlanarDoubleBufferStart(uint32_t Instance, DCMIPP_FullPlanarDstAddressTypeDef *pbuff1, DCMIPP_FullPlanarDstAddressTypeDef *pbuff2, uint32_t Mode)
+{
+  int32_t ret = BSP_ERROR_NONE;
+
+  if (Instance >= CAMERA_INSTANCES_NBR)
+  {
+    ret = BSP_ERROR_WRONG_PARAM;
+  }
+  else if (HAL_DCMIPP_CSI_PIPE_FullPlanarDoubleBufferStart(&hcamera_dcmipp, DCMIPP_PIPE1, DCMIPP_VIRTUAL_CHANNEL0, pbuff1, pbuff2, Mode) != HAL_OK)
+  {
+    ret = BSP_ERROR_PERIPH_FAILURE;
+  }
+  else
+  {
+    /* No action */
+  }
+  /* Start the Image Signal Processing */
+  if (ISP_Start(&hcamera_isp) != ISP_OK)
+  {
+    ret = BSP_ERROR_COMPONENT_FAILURE;
+  }
+  /* Return BSP status */
+  return ret;
+}
+
+/**
+  * @brief  Starts the camera capture in selected mode using semi-planar.
+  * @param  Instance Camera instance.
+  * @param  pbuff1     pointer to the camera first output buffer
+  * @param  pbuff2     pointer to the camera second output buffer
+  * @param  Mode CAMERA_MODE_CONTINUOUS or CAMERA_MODE_SNAPSHOT
+  * @retval BSP status
+  */
+int32_t BSP_CAMERA_SemiPlanarDoubleBufferStart(uint32_t Instance, DCMIPP_SemiPlanarDstAddressTypeDef *pbuff1, DCMIPP_SemiPlanarDstAddressTypeDef *pbuff2, uint32_t Mode)
+{
+  int32_t ret = BSP_ERROR_NONE;
+
+  if (Instance >= CAMERA_INSTANCES_NBR)
+  {
+    ret = BSP_ERROR_WRONG_PARAM;
+  }
+  else if (HAL_DCMIPP_CSI_PIPE_SemiPlanarDoubleBufferStart(&hcamera_dcmipp, DCMIPP_PIPE1, DCMIPP_VIRTUAL_CHANNEL0, pbuff1, pbuff2, Mode) != HAL_OK)
   {
     ret = BSP_ERROR_PERIPH_FAILURE;
   }
@@ -1622,6 +1750,7 @@ void HAL_DCMIPP_PIPE_VsyncEventCallback(DCMIPP_HandleTypeDef *hdcmipp, uint32_t 
   /* Update the frame counter and call the ISP statistics handler */
   ISP_IncMainFrameId(&hcamera_isp);
   ISP_GatherStatistics(&hcamera_isp);
+  ISP_OutputMeta(&hcamera_isp);
 
   BSP_CAMERA_VsyncEventCallback(0);
 }

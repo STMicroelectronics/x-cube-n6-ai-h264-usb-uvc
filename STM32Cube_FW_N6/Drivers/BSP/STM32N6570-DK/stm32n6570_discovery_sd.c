@@ -152,7 +152,7 @@ int32_t BSP_SD_Init(uint32_t Instance)
   {
 
 
-  /* SDMMC1 FPGA activation  and security configuration */
+  /* SDMMC1 activation  and security configuration */
   {
     uint32_t RIFSCAddress1 = 0x54024C18; /*  (RIFSC_RIMC_ATTRx) with x = 2 (0x8 :Master index of SDMMC1) */
     uint32_t RIFSCAddress2 = 0x54024C1C; /*  (RIFSC_RIMC_ATTRx) with x = 4 (0xC:Master index of SDMMC2) */
@@ -164,7 +164,8 @@ int32_t BSP_SD_Init(uint32_t Instance)
      /* readback data */
      data = *(uint32_t*)RIFSCAddress1 ;
      (void)data;
-
+     __HAL_RCC_SDMMC1_FORCE_RESET();
+     __HAL_RCC_SDMMC1_RELEASE_RESET();
      /* Lines below are useful only for DMA transfer */
      /* SDMMC1 Secure Guard RISUP Index is 53 */
      RIFSCAddress1 = 0x54024014; /* RIFSC_RISC_SECCFGRx with x = 1 */
@@ -180,6 +181,8 @@ int32_t BSP_SD_Init(uint32_t Instance)
      /* readback data */
      data = *(uint32_t*)RIFSCAddress2 ;
      (void)data;
+     __HAL_RCC_SDMMC2_FORCE_RESET();
+     __HAL_RCC_SDMMC2_RELEASE_RESET();
 
      /* Lines below are useful only for DMA transfer */
      /* SDMMC1 Secure Guard RISUP Index is 54 */
@@ -535,7 +538,7 @@ int32_t BSP_SD_ReadBlocks(uint32_t Instance, uint32_t *pData, uint32_t BlockIdx,
   */
 int32_t BSP_SD_WriteBlocks(uint32_t Instance, uint32_t *pData, uint32_t BlockIdx, uint32_t BlocksNbr)
 {
-  uint32_t timeout = SD_READ_TIMEOUT * BlocksNbr;
+  uint32_t timeout = SD_WRITE_TIMEOUT * BlocksNbr;
   int32_t ret;
 
   if (Instance >= SD_INSTANCES_NBR)

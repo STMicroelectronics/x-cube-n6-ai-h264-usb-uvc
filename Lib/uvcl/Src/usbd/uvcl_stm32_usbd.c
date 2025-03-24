@@ -25,6 +25,11 @@
 #ifdef UVCL_USBD_USE_THREADX
 #include "tx_api.h"
 #endif
+#ifdef UVCL_USBD_USE_FREERTOS
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#endif
 
 #ifdef UVC_LIB_USE_DMA
 #define UVCL_USBD_ATTR UVCL_UNCACHED UVCL_ALIGN_32
@@ -56,6 +61,13 @@ static IRQn_Type irqn_type;
 static TX_THREAD irq_thread;
 static uint8_t irq_tread_stack[4096];
 static TX_SEMAPHORE irq_sem;
+#endif
+#ifdef UVCL_USBD_USE_FREERTOS
+static IRQn_Type irqn_type;
+static StaticTask_t irq_thread;
+static StackType_t irq_tread_stack[configMINIMAL_STACK_SIZE];
+static SemaphoreHandle_t irq_sem;
+static StaticSemaphore_t irq_sem_buffer;
 #endif
 
 static int is_hs(USBD_HandleTypeDef *p_dev)
@@ -349,7 +361,7 @@ static void UVCL_stm32_usbd_build_descriptors(UVCL_Conf_t *conf)
   desc_conf.height = conf->height;
   desc_conf.fps = conf->fps;
   desc_conf.payload_type = conf->payload_type;
-  desc_conf.dwMaxVideoFrameSize = UVCL_ComputedwMaxVideoFrameSize(&p_ctx->conf);
+  desc_conf.dwMaxVideoFrameSize = UVCL_ComputedwMaxVideoFrameSize(conf);
   uvc_desc_hs_len = UVCL_get_configuration_desc(uvc_desc_hs, sizeof(uvc_desc_hs), &desc_conf);
   assert(uvc_desc_hs_len > 0);
 
@@ -361,25 +373,39 @@ static void UVCL_stm32_usbd_build_descriptors(UVCL_Conf_t *conf)
   assert(len == sizeof(dev_qualifier_desc));
 }
 
+#if defined(UVCL_USBD_USE_THREADX) || defined(UVCL_USBD_USE_FREERTOS)
 #ifdef UVCL_USBD_USE_THREADX
 static void irq_thread_fct(ULONG arg)
+#else
+static void irq_thread_fct(void *arg)
+#endif
 {
   int ret;
 
   while (1) {
+#ifdef UVCL_USBD_USE_THREADX
     ret = tx_semaphore_get(&irq_sem, TX_WAIT_FOREVER);
     assert(ret == 0);
+#else
+    ret = xSemaphoreTake(irq_sem, portMAX_DELAY);
+    assert(ret == pdTRUE);
+#endif
 
     HAL_PCD_IRQHandler(&uvcl_pcd_handle);
     HAL_NVIC_EnableIRQ(irqn_type);
   }
 }
 
-static void UVCL_stm32_usbd_threadx(PCD_TypeDef *pcd_instance)
+static void UVCL_stm32_usbd_rtos(PCD_TypeDef *pcd_instance)
 {
+#ifdef UVCL_USBD_USE_THREADX
   const UINT irq_priority = TX_MAX_PRIORITIES / 2 - 4;
   const ULONG time_slice = 10;
   int ret;
+#else
+  const UBaseType_t irq_priority = tskIDLE_PRIORITY + configMAX_PRIORITIES / 2 + 4;
+  TaskHandle_t hdl;
+#endif
 
   /* FIXME : fix this */
   if (pcd_instance == USB1_OTG_HS)
@@ -387,12 +413,21 @@ static void UVCL_stm32_usbd_threadx(PCD_TypeDef *pcd_instance)
   else if (pcd_instance == USB2_OTG_HS)
     irqn_type = USB2_OTG_HS_IRQn;
 
+#ifdef UVCL_USBD_USE_THREADX
   ret = tx_semaphore_create(&irq_sem, NULL, 0);
   assert(ret == 0);
 
   ret = tx_thread_create(&irq_thread, "irq", irq_thread_fct, 0, irq_tread_stack,
                          sizeof(irq_tread_stack), irq_priority, irq_priority, time_slice, TX_AUTO_START);
   assert(ret == TX_SUCCESS);
+#else
+  irq_sem = xSemaphoreCreateCountingStatic(1, 0, &irq_sem_buffer);
+  assert(irq_sem != NULL);
+
+  hdl = xTaskCreateStatic(irq_thread_fct, "irq", configMINIMAL_STACK_SIZE, NULL, irq_priority, irq_tread_stack,
+                          &irq_thread);
+  assert(hdl != NULL);
+#endif
 }
 #endif
 
@@ -416,8 +451,8 @@ int UVCL_stm32_usbd_init(UVCL_Ctx_t *p_ctx, PCD_HandleTypeDef *pcd_handle, PCD_T
   ret = USBD_Start(&usbd_ctx.usbd_dev);
   assert(ret == 0);
 
-#ifdef UVCL_USBD_USE_THREADX
-  UVCL_stm32_usbd_threadx(pcd_instance);
+#if defined(UVCL_USBD_USE_THREADX) || defined(UVCL_USBD_USE_FREERTOS)
+  UVCL_stm32_usbd_rtos(pcd_instance);
 #endif
 
   return 0;
@@ -431,5 +466,16 @@ void UVCL_stm32_usbd_IRQHandler()
   HAL_NVIC_DisableIRQ(irqn_type);
   ret = tx_semaphore_put(&irq_sem);
   assert(ret == 0);
+}
+#endif
+
+#ifdef UVCL_USBD_USE_FREERTOS
+void UVCL_stm32_usbd_IRQHandler()
+{
+  int ret;
+
+  HAL_NVIC_DisableIRQ(irqn_type);
+  ret = xSemaphoreGive(irq_sem);
+  assert(ret == pdTRUE);
 }
 #endif

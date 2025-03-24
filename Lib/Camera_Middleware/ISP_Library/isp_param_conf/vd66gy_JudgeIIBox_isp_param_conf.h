@@ -32,6 +32,7 @@ static const ISP_IQParamTypeDef ISP_IQParamCacheInit_VD66GY = {
     .AECAlgo = {
         .enable = 1,
         .exposureCompensation = EXPOSURE_TARGET_0_0_EV,
+        .antiFlickerFreq = 0,
     },
     .statRemoval = {
         .enable = 0,

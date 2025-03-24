@@ -192,9 +192,9 @@ void UTIL_LCD_SetFuncDriver(const LCD_UTILS_Drv_t *pDrv)
 
   DrawProp->LcdLayer = 0;
   DrawProp->LcdDevice = 0;
-  FuncDriver.GetXSize(0, &DrawProp->LcdXsize);
-  FuncDriver.GetYSize(0, &DrawProp->LcdYsize);
-  FuncDriver.GetFormat(0, &DrawProp->LcdPixelFormat);
+  FuncDriver.GetXSize(0, &DrawProp[DrawProp->LcdLayer].LcdXsize);
+  FuncDriver.GetYSize(0, &DrawProp[DrawProp->LcdLayer].LcdYsize);
+  FuncDriver.GetFormat(0, &DrawProp[DrawProp->LcdLayer].LcdPixelFormat);
 }
 
 /**
@@ -307,7 +307,7 @@ void UTIL_LCD_DrawHLine(uint32_t Xpos, uint32_t Ypos, uint32_t Length, uint32_t 
   {
     FuncDriver.DrawHLine(DrawProp->LcdDevice, Xpos, Ypos, Length, CONVERTARGB88882RGB565(Color));
   }
-  else if(DrawProp->LcdPixelFormat == LCD_PIXEL_FORMAT_RGB888)
+  else if(DrawProp[DrawProp->LcdLayer].LcdPixelFormat == LCD_PIXEL_FORMAT_RGB888)
   {
     FuncDriver.DrawHLine(DrawProp->LcdDevice, Xpos, Ypos, Length, CONVERTARGB88882RGB888(Color));
   }
@@ -335,7 +335,7 @@ void UTIL_LCD_DrawVLine(uint32_t Xpos, uint32_t Ypos, uint32_t Length, uint32_t 
   {
     FuncDriver.DrawVLine(DrawProp->LcdDevice, Xpos, Ypos, Length, CONVERTARGB88882RGB565(Color));
   }
-  else if(DrawProp->LcdPixelFormat == LCD_PIXEL_FORMAT_RGB888)
+  else if(DrawProp[DrawProp->LcdLayer].LcdPixelFormat == LCD_PIXEL_FORMAT_RGB888)
   {
     FuncDriver.DrawVLine(DrawProp->LcdDevice, Xpos, Ypos, Length, CONVERTARGB88882RGB888(Color));
   }
@@ -363,7 +363,7 @@ void UTIL_LCD_GetPixel(uint16_t Xpos, uint16_t Ypos, uint32_t *Color)
   {
     *Color = CONVERTRGB5652ARGB8888(*Color);
   }
-  else if(DrawProp->LcdPixelFormat == LCD_PIXEL_FORMAT_RGB888)
+  else if(DrawProp[DrawProp->LcdLayer].LcdPixelFormat == LCD_PIXEL_FORMAT_RGB888)
   {
     *Color = CONVERTRGB8882ARGB8888(*Color);
   }
@@ -386,7 +386,7 @@ void UTIL_LCD_SetPixel(uint16_t Xpos, uint16_t Ypos, uint32_t Color)
   {
     FuncDriver.SetPixel(DrawProp->LcdDevice, Xpos, Ypos, CONVERTARGB88882RGB565(Color));
   }
-  else if(DrawProp->LcdPixelFormat == LCD_PIXEL_FORMAT_RGB888)
+  else if(DrawProp[DrawProp->LcdLayer].LcdPixelFormat == LCD_PIXEL_FORMAT_RGB888)
   {
     FuncDriver.SetPixel(DrawProp->LcdDevice, Xpos, Ypos, CONVERTARGB88882RGB888(Color));
   }
@@ -778,7 +778,7 @@ void UTIL_LCD_FillRect(uint32_t Xpos, uint32_t Ypos, uint32_t Width, uint32_t He
   {
     FuncDriver.FillRect(DrawProp->LcdDevice, Xpos, Ypos, Width, Height, CONVERTARGB88882RGB565(Color));
   }
-  else if(DrawProp->LcdPixelFormat == LCD_PIXEL_FORMAT_RGB888)
+  else if(DrawProp[DrawProp->LcdLayer].LcdPixelFormat == LCD_PIXEL_FORMAT_RGB888)
   {
     FuncDriver.FillRect(DrawProp->LcdDevice, Xpos, Ypos, Width, Height, CONVERTARGB88882RGB888(Color));
   }

@@ -313,7 +313,10 @@ static int UVCL_conf_check(UVCL_Conf_t *conf)
       conf->payload_type != UVCL_PAYLOAD_FB_GREY &&
       conf->payload_type != UVCL_PAYLOAD_JPEG &&
       conf->payload_type != UVCL_PAYLOAD_FB_H264 &&
-      conf->payload_type != UVCL_PAYLOAD_FB_BGR3)
+      conf->payload_type != UVCL_PAYLOAD_FB_BGR3 &&
+      conf->payload_type != UVCL_PAYLOAD_FB_JPEG &&
+      conf->payload_type != UVCL_PAYLOAD_FB_GREY_D3DFMT_L8
+      )
     return -1;
 
   return 0;
@@ -418,6 +421,7 @@ uint32_t UVCL_ComputedwMaxVideoFrameSize(UVCL_Conf_t *conf)
 
   switch (conf->payload_type) {
   case UVCL_PAYLOAD_FB_GREY:
+  case UVCL_PAYLOAD_FB_GREY_D3DFMT_L8:
     res = conf->width * conf->height * 1;
     break;
   case UVCL_PAYLOAD_UNCOMPRESSED_YUY2:
@@ -431,6 +435,9 @@ uint32_t UVCL_ComputedwMaxVideoFrameSize(UVCL_Conf_t *conf)
     res = conf->dwMaxVideoFrameSize ?  conf->dwMaxVideoFrameSize : conf->width * conf->height;
     break;
   case UVCL_PAYLOAD_FB_H264:
+    res = conf->dwMaxVideoFrameSize ?  conf->dwMaxVideoFrameSize : conf->width * conf->height;
+    break;
+  case UVCL_PAYLOAD_FB_JPEG:
     res = conf->dwMaxVideoFrameSize ?  conf->dwMaxVideoFrameSize : conf->width * conf->height;
     break;
   default:
@@ -486,8 +493,10 @@ int UVCL_Deinit()
 
 void UVCL_IRQHandler()
 {
-#ifdef UVCL_USBD_USE_THREADX
+#if defined(UVCL_USBD_USE_THREADX) || defined(UVCL_USBD_USE_FREERTOS)
   UVCL_stm32_usbd_IRQHandler();
+#elif defined(UVC_LIB_USE_USBX)
+  UVCL_stm32_usbx_IRQHandler();
 #else
   HAL_PCD_IRQHandler(&uvcl_pcd_handle);
 #endif

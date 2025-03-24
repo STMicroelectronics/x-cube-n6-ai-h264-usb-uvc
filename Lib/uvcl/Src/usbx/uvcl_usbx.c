@@ -24,6 +24,11 @@
 #include "ux_api.h"
 #include "ux_dcd_stm32.h"
 #include "ux_device_class_video.h"
+#ifdef UVCL_USBX_USE_FREERTOS
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+#endif
 
 static uint8_t usbx_mem_pool[USBX_MEM_SIZE] UVCL_ALIGN_32;
 #ifdef UVC_LIB_USE_DMA
@@ -33,6 +38,13 @@ static uint8_t uvc_desc_fs[UVC_MAX_CONF_LEN];
 static uint8_t uvc_desc_hs[UVC_MAX_CONF_LEN];
 static uint8_t uvc_dev_strings[UVC_MAX_STRING_LEN];
 static uint8_t uvc_dev_langid[UVC_MAX_LANGID_LEN];
+#ifdef  UVCL_USBX_USE_FREERTOS
+static IRQn_Type irqn_type;
+static StaticTask_t cb_thread;
+static StackType_t cb_tread_stack[configMINIMAL_STACK_SIZE];
+static SemaphoreHandle_t cb_sem;
+static StaticSemaphore_t cb_sem_buffer;
+#endif
 
 static int is_hs()
 {
@@ -224,20 +236,6 @@ static VOID UVCL_instance_deactivate(VOID *video_instance)
   ;
 }
 
-static UINT usbx_device_cb(ULONG cb_evt)
-{
-  //printf("%s evt %d\n", __func__, (int) cb_evt);
-
-#if defined(UX_DEVICE_STANDALONE)
-  if (cb_evt == UX_DCD_STM32_SOF_RECEIVED) {
-    ux_system_tasks_run();
-    ux_system_tasks_run();
-  }
-#endif
-
-  return 0;
-}
-
 static int UVCL_usbx_extract_string(uint8_t langid[2], int index, uint8_t *string_desc, uint8_t *p_dst, int dst_len)
 {
   int str_len = (string_desc[0] - 2) / 2;
@@ -286,6 +284,41 @@ static int UVCL_usbx_build_dev_strings(uint8_t langid[2], uint8_t *p_dst, int ds
   return res;
 }
 
+#ifdef  UVCL_USBX_USE_FREERTOS
+static void cb_thread_fct(void *arg)
+{
+  int ret;
+
+  while (1) {
+    ret = xSemaphoreTake(cb_sem, portMAX_DELAY);
+    assert(ret == pdTRUE);
+
+    ux_system_tasks_run();
+    ux_system_tasks_run();
+    HAL_NVIC_EnableIRQ(irqn_type);
+  }
+}
+
+static void UVCL_usbx_freertos(PCD_TypeDef *pcd_instance)
+{
+  const UBaseType_t cb_priority = tskIDLE_PRIORITY + configMAX_PRIORITIES / 2;
+  TaskHandle_t hdl;
+
+  /* FIXME : fix this */
+  if (pcd_instance == USB1_OTG_HS)
+    irqn_type = USB1_OTG_HS_IRQn;
+  else if (pcd_instance == USB2_OTG_HS)
+    irqn_type = USB2_OTG_HS_IRQn;
+
+  cb_sem = xSemaphoreCreateCountingStatic(1, 0, &cb_sem_buffer);
+  assert(cb_sem != NULL);
+
+  hdl = xTaskCreateStatic(cb_thread_fct, "irq", configMINIMAL_STACK_SIZE, NULL, cb_priority, cb_tread_stack,
+                          &cb_thread);
+  assert(hdl != NULL);
+}
+#endif
+
 int UVCL_usbx_init(UVCL_Ctx_t *p_ctx, PCD_HandleTypeDef *pcd_handle, PCD_TypeDef *pcd_instance, UVCL_Conf_t *conf)
 {
   UX_DEVICE_CLASS_VIDEO_STREAM_PARAMETER vsp[1] = { 0 };
@@ -314,7 +347,7 @@ int UVCL_usbx_init(UVCL_Ctx_t *p_ctx, PCD_HandleTypeDef *pcd_handle, PCD_TypeDef
   desc_conf.height = conf->height;
   desc_conf.fps = conf->fps;
   desc_conf.payload_type = conf->payload_type;
-  desc_conf.dwMaxVideoFrameSize = UVCL_ComputedwMaxVideoFrameSize(&p_ctx->conf);
+  desc_conf.dwMaxVideoFrameSize = UVCL_ComputedwMaxVideoFrameSize(conf);
   uvc_desc_hs_len = UVCL_get_device_desc(uvc_desc_hs, sizeof(uvc_desc_hs), 1, 2, 3);
   assert(uvc_desc_hs_len > 0);
   len = UVCL_get_configuration_desc(&uvc_desc_hs[uvc_desc_hs_len], sizeof(uvc_desc_hs) - uvc_desc_hs_len,
@@ -342,7 +375,7 @@ int UVCL_usbx_init(UVCL_Ctx_t *p_ctx, PCD_HandleTypeDef *pcd_handle, PCD_TypeDef
   ret = ux_device_stack_initialize(uvc_desc_hs, uvc_desc_hs_len,
                                    uvc_desc_fs, uvc_desc_fs_len,
                                    uvc_dev_strings, uvc_dev_strings_len,
-                                   uvc_dev_langid, uvc_dev_langid_len, usbx_device_cb);
+                                   uvc_dev_langid, uvc_dev_langid_len, NULL);
   if (ret)
     return ret;
 
@@ -367,6 +400,10 @@ int UVCL_usbx_init(UVCL_Ctx_t *p_ctx, PCD_HandleTypeDef *pcd_handle, PCD_TypeDef
   if (ret)
     return ret;
 
+#ifdef  UVCL_USBX_USE_FREERTOS
+  UVCL_usbx_freertos(pcd_instance);
+#endif
+
   return ux_dcd_stm32_initialize((ULONG)pcd_instance, (ULONG)pcd_handle);
 }
 
@@ -386,3 +423,25 @@ VOID _ux_utility_interrupt_restore(ALIGN_TYPE flags)
     __enable_irq();
 }
 #endif
+
+void UVCL_stm32_usbx_IRQHandler()
+{
+  HAL_PCD_IRQHandler(&uvcl_pcd_handle);
+
+#ifdef UX_STANDALONE
+#ifdef UVCL_USBX_USE_FREERTOS
+  {
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    int ret;
+
+    ret = xSemaphoreGiveFromISR(cb_sem, &xHigherPriorityTaskWoken);
+    assert(ret == pdTRUE);
+    HAL_NVIC_DisableIRQ(irqn_type);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+  }
+#else
+  ux_system_tasks_run();
+  ux_system_tasks_run();
+#endif
+#endif
+}

@@ -38,7 +38,7 @@ extern "C" {
 
 
 /* change the value of this macro to select memory manager */
-#define EWL_ALLOC_API EWL_USE_THREADX_MM
+#define EWL_ALLOC_API EWL_USER_MM
 
 #define EWL_USE_POLLING_SYNC 0
 #define EWL_USE_FREERTOS_SYNC 1
@@ -47,7 +47,7 @@ extern "C" {
 
 
 /* change the value of this macro to select memory manager */
-#define EWL_SYNC_API EWL_USE_THREADX_SYNC
+#define EWL_SYNC_API EWL_USE_FREERTOS_SYNC
 
 //#define TRACE_EWL
 

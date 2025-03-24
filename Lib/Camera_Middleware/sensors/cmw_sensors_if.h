@@ -60,6 +60,8 @@ typedef struct
   int32_t (*SetGain)(void *, int32_t);
   int32_t (*SetExposure)(void *, int32_t);
   int32_t (*SetExposureMode)(void *, int32_t);
+  int32_t (*SetWBRefMode)(void *, uint8_t, uint32_t);
+  int32_t (*ListWBRefModes)(void *, uint32_t[]);
   int32_t (*SetFlickerMode)(void *, int32_t);
   int32_t (*GetSensorInfo)(void *, ISP_SensorInfoTypeDef *);
   int32_t (*SetTestPattern)(void *, int32_t);

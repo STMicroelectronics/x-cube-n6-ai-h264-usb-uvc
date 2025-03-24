@@ -195,7 +195,11 @@ int32_t BSP_CAMERA_RegisterDefaultMspCallbacks(uint32_t Instance);
 int32_t BSP_CAMERA_RegisterMspCallbacks(uint32_t Instance, BSP_CAMERA_Cb_t *CallBacks);
 #endif /* (USE_HAL_DCMIPP_REGISTER_CALLBACKS > 0) */
 int32_t BSP_CAMERA_Start(uint32_t Instance, uint8_t *pbuff, uint32_t Mode);
+int32_t BSP_CAMERA_FullPlanarStart(uint32_t Instance, DCMIPP_FullPlanarDstAddressTypeDef *pbuff, uint32_t Mode);
+int32_t BSP_CAMERA_SemiPlanarStart(uint32_t Instance, DCMIPP_SemiPlanarDstAddressTypeDef *pbuff, uint32_t Mode);
 int32_t BSP_CAMERA_DoubleBufferStart(uint32_t Instance, uint8_t *pbuff1, uint8_t *pbuff2, uint32_t Mode);
+int32_t BSP_CAMERA_FullPlanarDoubleBufferStart(uint32_t Instance, DCMIPP_FullPlanarDstAddressTypeDef *pbuff1, DCMIPP_FullPlanarDstAddressTypeDef *pbuff2, uint32_t Mode);
+int32_t BSP_CAMERA_SemiPlanarDoubleBufferStart(uint32_t Instance, DCMIPP_SemiPlanarDstAddressTypeDef *pbuff1, DCMIPP_SemiPlanarDstAddressTypeDef *pbuff2, uint32_t Mode);
 int32_t BSP_CAMERA_Suspend(uint32_t Instance);
 int32_t BSP_CAMERA_Resume(uint32_t Instance);
 int32_t BSP_CAMERA_Stop(uint32_t Instance);

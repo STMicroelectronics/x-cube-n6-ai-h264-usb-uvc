@@ -246,6 +246,8 @@ i32 EWLRelease(const void *inst)
   }
 #elif (EWL_ALLOC_API == EWL_USE_STM32MPM_MM)
 #elif (EWL_ALLOC_API == EWL_USER_MM)
+#elif (EWL_ALLOC_API == EWL_USE_FREERTOS_MM)
+  vEventGroupDelete(ewl_instance.ewl_event_group);  
 #else
 #endif /* EWL_ALLOC_API */
   /* save memory pool address */

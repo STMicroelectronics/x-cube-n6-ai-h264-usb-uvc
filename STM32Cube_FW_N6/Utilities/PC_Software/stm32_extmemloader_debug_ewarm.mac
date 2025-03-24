@@ -1,0 +1,13 @@
+
+
+/* Called once after the target application is downloaded. */
+execUserSetup()
+{
+    #PC =&Reset_Handler;
+    #SP =__ICFEDIT_region_RAM_end__;
+
+    /* Re-load image partially erased by IAR reset */
+   __loadImage("$EXE_DIR$\\$TARGET_FNAME$", 0, 0);
+   __restoreSoftwareBreakpoints();
+
+}

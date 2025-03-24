@@ -11,6 +11,7 @@ This readme explains how to use the different available post processing code.
 | ST YOLOX      | person_detection     |
 | YOLOv8        | person_detection     |
 | YOLOv5        | person_detection     |
+| YOLOv4        | person_detection     |
 | YOLOv5nu      | person_detection     |
 | Tiny Yolo V2  | person_detection     |
 | Standard SSD  | person_detection     |
@@ -23,6 +24,17 @@ This readme explains how to use the different available post processing code.
 | CNN_pd     | palm_detection |
 
 ## Version History
+
+## v0.8.0 - 2025-04-01
+
+- **New Features:**
+  - Added support for YOLOv4 object detection post-processing.
+
+### v0.7.3 - 2025-03-24
+
+- **Improvements:**
+  - st_yolox_pp optimization for 1 class case.
+  - remove some unused code
 
 ### v0.7.2 - 2024-11-19
 

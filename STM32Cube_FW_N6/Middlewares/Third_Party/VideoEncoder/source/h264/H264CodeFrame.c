@@ -239,6 +239,9 @@ h264EncodeFrame_e H264CodeFrame(h264Instance_s * inst)
             /* Release HW so that it can be used by other codecs */
             EWLReleaseHw(asic->ewl);
 
+            /* Prevent infinite loop in case of encoding timeout */
+            go_on = 0;            
+
         }
         else
         {

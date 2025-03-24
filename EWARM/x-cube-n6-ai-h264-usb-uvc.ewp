@@ -236,18 +236,17 @@
                     <state>USE_VD55G1_SENSOR</state>
                     <state>TX_MAX_PARALLEL_NETWORKS=1</state>
                     <state>LL_ATON_PLATFORM=LL_ATON_PLAT_STM32N6</state>
-                    <state>LL_ATON_OSAL=LL_ATON_OSAL_THREADX</state>
+                    <state>LL_ATON_OSAL=LL_ATON_OSAL_FREERTOS</state>
                     <state>LL_ATON_RT_MODE=LL_ATON_RT_ASYNC</state>
                     <state>LL_ATON_SW_FALLBACK</state>
                     <state>LL_ATON_DBG_BUFFER_INFO_EXCLUDED=1</state>
-                    <state>TX_HAS_PARALLEL_NETWORKS=0</state>
-                    <state>TX_SINGLE_MODE_SECURE</state>
-                    <state>FEAT_THREADX</state>
-                    <state>TX_INCLUDE_USER_DEFINE_FILE</state>
-                    <state>TX_EXECUTION_PROFILE_ENABLE</state>
+                    <state>APP_HAS_PARALLEL_NETWORKS=0</state>
+                    <state>FEAT_FREERTOS</state>
                     <state>UVC_LIB_USE_USBX</state>
                     <state>UX_INCLUDE_USER_DEFINE_FILE</state>
                     <state>USBL_PACKET_PER_MICRO_FRAME=3</state>
+                    <state>UX_STANDALONE</state>
+                    <state>UVCL_USBX_USE_FREERTOS</state>
                     <state>UVC_LIB_USE_DMA</state>
                 </option>
                 <option>
@@ -383,6 +382,7 @@
                     <state>$PROJ_DIR$\..\Lib\AI_Runtime\Npu\ll_aton</state>
                     <state>$PROJ_DIR$\..\Lib\AI_Runtime\Npu\Devices\STM32N6XX</state>
                     <state>$PROJ_DIR$\..\Lib\lib_vision_models_pp\lib_vision_models_pp\Inc</state>
+                    <state>$PROJ_DIR$\..\Lib\ai-postprocessing-wrapper</state>
                     <state>$PROJ_DIR$\..\Lib\Camera_Middleware</state>
                     <state>$PROJ_DIR$\..\Lib\Camera_Middleware\sensors</state>
                     <state>$PROJ_DIR$\..\Lib\Camera_Middleware\sensors\imx335</state>
@@ -390,9 +390,8 @@
                     <state>$PROJ_DIR$\..\Lib\Camera_Middleware\sensors\vd6g</state>
                     <state>$PROJ_DIR$\..\Lib\Camera_Middleware\ISP_Library\isp\Inc</state>
                     <state>$PROJ_DIR$\..\Lib\Camera_Middleware\ISP_Library\evision\Inc</state>
-                    <state>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\inc</state>
-                    <state>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\gnu\inc</state>
-                    <state>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\utility\execution_profile_kit</state>
+                    <state>$PROJ_DIR$\..\Lib\FreeRTOS\Source\include</state>
+                    <state>$PROJ_DIR$\..\Lib\FreeRTOS\Source\portable\GCC\ARM_CM55_NTZ\non_secure</state>
                     <state>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\VideoEncoder_EWL</state>
                     <state>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\Third_Party\VideoEncoder\inc</state>
                     <state>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\Third_Party\VideoEncoder\source\common</state>
@@ -592,18 +591,17 @@
                     <state>USE_VD55G1_SENSOR</state>
                     <state>TX_MAX_PARALLEL_NETWORKS=1</state>
                     <state>LL_ATON_PLATFORM=LL_ATON_PLAT_STM32N6</state>
-                    <state>LL_ATON_OSAL=LL_ATON_OSAL_THREADX</state>
+                    <state>LL_ATON_OSAL=LL_ATON_OSAL_FREERTOS</state>
                     <state>LL_ATON_RT_MODE=LL_ATON_RT_ASYNC</state>
                     <state>LL_ATON_SW_FALLBACK</state>
                     <state>LL_ATON_DBG_BUFFER_INFO_EXCLUDED=1</state>
-                    <state>TX_HAS_PARALLEL_NETWORKS=0</state>
-                    <state>TX_SINGLE_MODE_SECURE</state>
-                    <state>FEAT_THREADX</state>
-                    <state>TX_INCLUDE_USER_DEFINE_FILE</state>
-                    <state>TX_EXECUTION_PROFILE_ENABLE</state>
+                    <state>APP_HAS_PARALLEL_NETWORKS=0</state>
+                    <state>FEAT_FREERTOS</state>
                     <state>UVC_LIB_USE_USBX</state>
                     <state>UX_INCLUDE_USER_DEFINE_FILE</state>
                     <state>USBL_PACKET_PER_MICRO_FRAME=3</state>
+                    <state>UX_STANDALONE</state>
+                    <state>UVCL_USBX_USE_FREERTOS</state>
                     <state>UVC_LIB_USE_DMA</state>
                 </option>
                 <option>
@@ -710,6 +708,7 @@
                     <state>$PROJ_DIR$\..\Lib\AI_Runtime\Npu\ll_aton</state>
                     <state>$PROJ_DIR$\..\Lib\AI_Runtime\Npu\Devices\STM32N6XX</state>
                     <state>$PROJ_DIR$\..\Lib\lib_vision_models_pp\lib_vision_models_pp\Inc</state>
+                    <state>$PROJ_DIR$\..\Lib\ai-postprocessing-wrapper</state>
                     <state>$PROJ_DIR$\..\Lib\Camera_Middleware</state>
                     <state>$PROJ_DIR$\..\Lib\Camera_Middleware\sensors</state>
                     <state>$PROJ_DIR$\..\Lib\Camera_Middleware\sensors\imx335</state>
@@ -717,9 +716,8 @@
                     <state>$PROJ_DIR$\..\Lib\Camera_Middleware\sensors\vd6g</state>
                     <state>$PROJ_DIR$\..\Lib\Camera_Middleware\ISP_Library\isp\Inc</state>
                     <state>$PROJ_DIR$\..\Lib\Camera_Middleware\ISP_Library\evision\Inc</state>
-                    <state>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\inc</state>
-                    <state>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\gnu\inc</state>
-                    <state>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\utility\execution_profile_kit</state>
+                    <state>$PROJ_DIR$\..\Lib\FreeRTOS\Source\include</state>
+                    <state>$PROJ_DIR$\..\Lib\FreeRTOS\Source\portable\GCC\ARM_CM55_NTZ\non_secure</state>
                     <state>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\VideoEncoder_EWL</state>
                     <state>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\Third_Party\VideoEncoder\inc</state>
                     <state>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\Third_Party\VideoEncoder\source\common</state>
@@ -923,7 +921,7 @@
                 </option>
                 <option>
                     <name>IlinkAdditionalLibs</name>
-                    <state>$PROJ_DIR$\..\Lib\AI_Runtime\Lib\ABI2.1\ARMCortexM55\NetworkRuntime1000_CM55_IAR.a</state>
+                    <state>$PROJ_DIR$\..\Lib\AI_Runtime\Lib\ABI2.1\ARMCortexM55\NetworkRuntime1010_CM55_IAR.a</state>
                     <state>$PROJ_DIR$\..\Lib\Camera_Middleware\ISP_Library\evision\Lib\libn6-evision-awb_iar.a</state>
                     <state>$PROJ_DIR$\..\Lib\Camera_Middleware\ISP_Library\evision\Lib\libn6-evision-st-ae_iar.a</state>
                 </option>
@@ -1210,15 +1208,54 @@
                 <name>$PROJ_DIR$\Src\console.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\Src\startup_stm32n657xx.s</name>
+                <name>$PROJ_DIR$\Src\freertos_libc.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\Src\tx_initialize_low_level.s</name>
+                <name>$PROJ_DIR$\Src\startup_stm32n657xx.s</name>
             </file>
         </group>
     </group>
     <group>
         <name>Lib</name>
+        <group>
+            <name>ai-postprocessing-wrapper</name>
+            <file>
+                <name>$PROJ_DIR$\..\Lib\ai-postprocessing-wrapper\app_postprocess_iseg_yolo_v8_ui.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Lib\ai-postprocessing-wrapper\app_postprocess_mpe_pd_uf.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Lib\ai-postprocessing-wrapper\app_postprocess_mpe_yolo_v8_uf.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Lib\ai-postprocessing-wrapper\app_postprocess_od_st_ssd_uf.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Lib\ai-postprocessing-wrapper\app_postprocess_od_st_yolox_uf.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Lib\ai-postprocessing-wrapper\app_postprocess_od_yolov2_uf.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Lib\ai-postprocessing-wrapper\app_postprocess_od_yolov5_uu.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Lib\ai-postprocessing-wrapper\app_postprocess_od_yolov8_uf.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Lib\ai-postprocessing-wrapper\app_postprocess_od_yolov8_ui.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Lib\ai-postprocessing-wrapper\app_postprocess_spe_movenet_uf.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Lib\ai-postprocessing-wrapper\app_postprocess_sseg_deeplab_v3_uf.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Lib\ai-postprocessing-wrapper\app_postprocess_template.c</name>
+            </file>
+        </group>
         <group>
             <name>AI_Runtime</name>
             <group>
@@ -1253,7 +1290,7 @@
                         <name>$PROJ_DIR$\..\Lib\AI_Runtime\Npu\ll_aton\ll_aton_lib_sw_operators.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\Lib\AI_Runtime\Npu\ll_aton\ll_aton_osal_threadx.c</name>
+                        <name>$PROJ_DIR$\..\Lib\AI_Runtime\Npu\ll_aton\ll_aton_osal_freertos.c</name>
                     </file>
                     <file>
                         <name>$PROJ_DIR$\..\Lib\AI_Runtime\Npu\ll_aton\ll_aton_rt_main.c</name>
@@ -1340,6 +1377,54 @@
             </file>
         </group>
         <group>
+            <name>FreeRTOS</name>
+            <group>
+                <name>Source</name>
+                <group>
+                    <name>portable</name>
+                    <group>
+                        <name>IAR</name>
+                        <group>
+                            <name>ARM_CM55_NTZ</name>
+                            <group>
+                                <name>non_secure</name>
+                                <file>
+                                    <name>$PROJ_DIR$\..\Lib\FreeRTOS\Source\portable\IAR\ARM_CM55_NTZ\non_secure\port.c</name>
+                                </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\Lib\FreeRTOS\Source\portable\IAR\ARM_CM55_NTZ\non_secure\portasm.s</name>
+                                </file>
+                            </group>
+                        </group>
+                    </group>
+                    <group>
+                        <name>MemMang</name>
+                        <file>
+                            <name>$PROJ_DIR$\..\Lib\FreeRTOS\Source\portable\MemMang\heap_4.c</name>
+                        </file>
+                    </group>
+                </group>
+                <file>
+                    <name>$PROJ_DIR$\..\Lib\FreeRTOS\Source\croutine.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Lib\FreeRTOS\Source\event_groups.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Lib\FreeRTOS\Source\list.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Lib\FreeRTOS\Source\queue.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Lib\FreeRTOS\Source\tasks.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\Lib\FreeRTOS\Source\timers.c</name>
+                </file>
+            </group>
+        </group>
+        <group>
             <name>lib_vision_models_pp</name>
             <group>
                 <name>lib_vision_models_pp</name>
@@ -1356,6 +1441,15 @@
                     </file>
                     <file>
                         <name>$PROJ_DIR$\..\Lib\lib_vision_models_pp\lib_vision_models_pp\Src\vision_models_pp.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\Lib\lib_vision_models_pp\lib_vision_models_pp\Src\vision_models_pp_maxi_if32.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\Lib\lib_vision_models_pp\lib_vision_models_pp\Src\vision_models_pp_maxi_is8.c</name>
+                    </file>
+                    <file>
+                        <name>$PROJ_DIR$\..\Lib\lib_vision_models_pp\lib_vision_models_pp\Src\vision_models_pp_maxi_iu8.c</name>
                     </file>
                 </group>
             </group>
@@ -1400,19 +1494,16 @@
             <name>$PROJ_DIR$\..\Src\app_fuseprogramming.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Src\app_postprocess.c</name>
+            <name>$PROJ_DIR$\..\Src\draw.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Src\draw.c</name>
+            <name>$PROJ_DIR$\..\Src\freertos_bsp.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Src\main.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Src\stm32n6xx_it.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Src\threadx_hal.c</name>
         </file>
     </group>
     <group>
@@ -1535,6 +1626,9 @@
                         <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Drivers\STM32N6xx_HAL_Driver\Src\stm32n6xx_hal_rif.c</name>
                     </file>
                     <file>
+                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Drivers\STM32N6xx_HAL_Driver\Src\stm32n6xx_hal_tim.c</name>
+                    </file>
+                    <file>
                         <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Drivers\STM32N6xx_HAL_Driver\Src\stm32n6xx_hal_uart.c</name>
                     </file>
                     <file>
@@ -1553,639 +1647,6 @@
             <name>Middlewares</name>
             <group>
                 <name>ST</name>
-                <group>
-                    <name>threadx</name>
-                    <group>
-                        <name>common</name>
-                        <group>
-                            <name>src</name>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_block_allocate.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_block_pool_cleanup.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_block_pool_create.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_block_pool_delete.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_block_pool_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_block_pool_initialize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_block_pool_performance_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_block_pool_performance_system_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_block_pool_prioritize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_block_release.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_byte_allocate.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_byte_pool_cleanup.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_byte_pool_create.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_byte_pool_delete.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_byte_pool_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_byte_pool_initialize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_byte_pool_performance_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_byte_pool_performance_system_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_byte_pool_prioritize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_byte_pool_search.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_byte_release.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_event_flags_cleanup.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_event_flags_create.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_event_flags_delete.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_event_flags_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_event_flags_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_event_flags_initialize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_event_flags_performance_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_event_flags_performance_system_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_event_flags_set.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_event_flags_set_notify.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_initialize_high_level.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_initialize_kernel_enter.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_initialize_kernel_setup.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_misra.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_mutex_cleanup.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_mutex_create.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_mutex_delete.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_mutex_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_mutex_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_mutex_initialize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_mutex_performance_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_mutex_performance_system_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_mutex_prioritize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_mutex_priority_change.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_mutex_put.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_queue_cleanup.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_queue_create.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_queue_delete.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_queue_flush.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_queue_front_send.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_queue_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_queue_initialize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_queue_performance_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_queue_performance_system_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_queue_prioritize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_queue_receive.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_queue_send.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_queue_send_notify.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_semaphore_ceiling_put.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_semaphore_cleanup.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_semaphore_create.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_semaphore_delete.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_semaphore_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_semaphore_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_semaphore_initialize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_semaphore_performance_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_semaphore_performance_system_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_semaphore_prioritize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_semaphore_put.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_semaphore_put_notify.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_create.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_delete.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_entry_exit_notify.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_identify.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_initialize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_performance_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_performance_system_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_preemption_change.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_priority_change.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_relinquish.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_reset.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_resume.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_shell_entry.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_sleep.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_stack_analyze.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_stack_error_handler.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_stack_error_notify.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_suspend.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_system_preempt_check.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_system_resume.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_system_suspend.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_terminate.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_time_slice.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_time_slice_change.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_timeout.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_thread_wait_abort.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_time_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_time_set.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_timer_activate.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_timer_change.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_timer_create.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_timer_deactivate.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_timer_delete.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_timer_expiration_process.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_timer_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_timer_initialize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_timer_performance_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_timer_performance_system_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_timer_system_activate.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_timer_system_deactivate.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_timer_thread_entry.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_trace_buffer_full_notify.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_trace_disable.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_trace_enable.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_trace_event_filter.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_trace_event_unfilter.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_trace_initialize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_trace_interrupt_control.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_trace_isr_enter_insert.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_trace_isr_exit_insert.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_trace_object_register.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_trace_object_unregister.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\tx_trace_user_event_insert.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_block_allocate.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_block_pool_create.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_block_pool_delete.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_block_pool_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_block_pool_prioritize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_block_release.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_byte_allocate.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_byte_pool_create.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_byte_pool_delete.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_byte_pool_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_byte_pool_prioritize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_byte_release.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_event_flags_create.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_event_flags_delete.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_event_flags_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_event_flags_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_event_flags_set.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_event_flags_set_notify.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_mutex_create.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_mutex_delete.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_mutex_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_mutex_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_mutex_prioritize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_mutex_put.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_queue_create.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_queue_delete.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_queue_flush.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_queue_front_send.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_queue_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_queue_prioritize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_queue_receive.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_queue_send.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_queue_send_notify.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_semaphore_ceiling_put.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_semaphore_create.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_semaphore_delete.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_semaphore_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_semaphore_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_semaphore_prioritize.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_semaphore_put.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_semaphore_put_notify.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_thread_create.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_thread_delete.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_thread_entry_exit_notify.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_thread_info_get.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_thread_preemption_change.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_thread_priority_change.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_thread_relinquish.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_thread_reset.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_thread_resume.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_thread_suspend.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_thread_terminate.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_thread_time_slice_change.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_thread_wait_abort.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_timer_activate.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_timer_change.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_timer_create.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_timer_deactivate.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_timer_delete.c</name>
-                            </file>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\common\src\txe_timer_info_get.c</name>
-                            </file>
-                        </group>
-                    </group>
-                    <group>
-                        <name>ports</name>
-                        <group>
-                            <name>cortex_m55</name>
-                            <group>
-                                <name>iar</name>
-                                <group>
-                                    <name>src</name>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\iar\src\tx_iar.c</name>
-                                    </file>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\iar\src\tx_thread_context_restore.s</name>
-                                    </file>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\iar\src\tx_thread_context_save.s</name>
-                                    </file>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\iar\src\tx_thread_interrupt_control.s</name>
-                                    </file>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\iar\src\tx_thread_interrupt_disable.s</name>
-                                    </file>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\iar\src\tx_thread_interrupt_restore.s</name>
-                                    </file>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\iar\src\tx_thread_schedule.s</name>
-                                    </file>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\iar\src\tx_thread_secure_stack.c</name>
-                                    </file>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\iar\src\tx_thread_secure_stack_allocate.s</name>
-                                    </file>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\iar\src\tx_thread_secure_stack_free.s</name>
-                                    </file>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\iar\src\tx_thread_secure_stack_initialize.s</name>
-                                    </file>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\iar\src\tx_thread_stack_build.s</name>
-                                    </file>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\iar\src\tx_thread_system_return.s</name>
-                                    </file>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\iar\src\tx_timer_interrupt.s</name>
-                                    </file>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\iar\src\txe_thread_secure_stack_allocate.c</name>
-                                    </file>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\ports\cortex_m55\iar\src\txe_thread_secure_stack_free.c</name>
-                                    </file>
-                                </group>
-                            </group>
-                        </group>
-                    </group>
-                    <group>
-                        <name>utility</name>
-                        <group>
-                            <name>execution_profile_kit</name>
-                            <file>
-                                <name>$PROJ_DIR$\..\STM32Cube_FW_N6\Middlewares\ST\threadx\utility\execution_profile_kit\tx_execution_profile.c</name>
-                            </file>
-                        </group>
-                    </group>
-                </group>
                 <group>
                     <name>usbx</name>
                     <group>

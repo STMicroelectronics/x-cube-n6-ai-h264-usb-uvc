@@ -152,6 +152,53 @@ int32_t CMW_CAMERA_GetSensorName(CMW_Sensor_Name_t *sensorName)
   return CMW_ERROR_NONE;
 }
 
+/**
+  * @brief  Set White Balance mode.
+  * @param  Automatic  If not null, set automatic white balance mode
+  * @param  RefColorTemp  If automatic is null, set white balance mode
+  * @retval CMW status
+  */
+int32_t CMW_CAMERA_SetWBRefMode(uint8_t Automatic, uint32_t RefColorTemp)
+{
+  int ret;
+
+  ret = Camera_Drv.SetWBRefMode(&camera_bsp, Automatic, RefColorTemp);
+  if (ret != CMW_ERROR_NONE)
+  {
+    return CMW_ERROR_COMPONENT_FAILURE;
+  }
+
+  ret = CMW_ERROR_NONE;
+  /* Return CMW status */
+  return ret;
+}
+
+/**
+  * @brief  Get White Balance reference modes list.
+  * @param  RefColorTemp  White Balance reference modes
+  * @retval CMW status
+  */
+int32_t CMW_CAMERA_ListWBRefModes(uint32_t RefColorTemp[])
+{
+  int ret;
+
+  ret = Camera_Drv.ListWBRefModes(&camera_bsp, RefColorTemp);
+  if (ret != CMW_ERROR_NONE)
+  {
+    return CMW_ERROR_COMPONENT_FAILURE;
+  }
+
+  ret = CMW_ERROR_NONE;
+  /* Return CMW status */
+  return ret;
+}
+
+/**
+  * @brief  Probe camera sensor.
+  * @param  initValues  Initialization values for the sensor
+  * @param  sensorName  Camera sensor name
+  * @retval CMW status
+  */
 static int CMW_CAMERA_Probe_Sensor(CMW_Sensor_Init_t *initValues, CMW_Sensor_Name_t *sensorName)
 {
   int ret;
@@ -398,17 +445,22 @@ int32_t CMW_CAMERA_DeInit(void)
 {
   int32_t ret = CMW_ERROR_NONE;
 
-
-  ret = HAL_DCMIPP_CSI_PIPE_Stop(&hcamera_dcmipp, DCMIPP_PIPE1, DCMIPP_VIRTUAL_CHANNEL0);
-  if (ret != HAL_OK)
+  if (HAL_DCMIPP_PIPE_GetState(&hcamera_dcmipp, DCMIPP_PIPE1) != HAL_DCMIPP_PIPE_STATE_RESET)
   {
-    return CMW_ERROR_PERIPH_FAILURE;
+    ret = HAL_DCMIPP_CSI_PIPE_Stop(&hcamera_dcmipp, DCMIPP_PIPE1, DCMIPP_VIRTUAL_CHANNEL0);
+    if (ret != HAL_OK)
+    {
+      return CMW_ERROR_PERIPH_FAILURE;
+    }
   }
 
-  ret = HAL_DCMIPP_CSI_PIPE_Stop(&hcamera_dcmipp, DCMIPP_PIPE2, DCMIPP_VIRTUAL_CHANNEL0);
-  if (ret != HAL_OK)
+  if (HAL_DCMIPP_PIPE_GetState(&hcamera_dcmipp, DCMIPP_PIPE2) != HAL_DCMIPP_PIPE_STATE_RESET)
   {
-    return CMW_ERROR_PERIPH_FAILURE;
+    ret = HAL_DCMIPP_CSI_PIPE_Stop(&hcamera_dcmipp, DCMIPP_PIPE2, DCMIPP_VIRTUAL_CHANNEL0);
+    if (ret != HAL_OK)
+    {
+      return CMW_ERROR_PERIPH_FAILURE;
+    }
   }
 
   ret = HAL_DCMIPP_DeInit(&hcamera_dcmipp);
@@ -1031,7 +1083,7 @@ static int32_t CMW_CAMERA_VD66GY_Init( CMW_Sensor_Init_t *initSensors_params)
 #endif
 
 #if defined(USE_IMX335_SENSOR)
-static int32_t CMW_CAMERA_IMX335_Init( CMW_Sensor_Init_t *initSensors_params)
+static int32_t CMW_CAMERA_IMX335_Init(CMW_Sensor_Init_t *initSensors_params)
 {
   int32_t ret = CMW_ERROR_NONE;
   DCMIPP_CSI_ConfTypeDef csi_conf = { 0 };
@@ -1076,6 +1128,12 @@ static int32_t CMW_CAMERA_IMX335_Init( CMW_Sensor_Init_t *initSensors_params)
   }
 
   ret = Camera_Drv.SetFrequency(&camera_bsp, IMX335_INCK_24MHZ);
+  if (ret != CMW_ERROR_NONE)
+  {
+    return CMW_ERROR_COMPONENT_FAILURE;
+  }
+
+  ret = Camera_Drv.SetFramerate(&camera_bsp, initSensors_params->fps);
   if (ret != CMW_ERROR_NONE)
   {
     return CMW_ERROR_COMPONENT_FAILURE;

@@ -29,13 +29,17 @@
 #include "stm32n6xx_hal.h"
 #include "stm32n6xx_ll_venc.h"
 #include "stm32n6570_discovery.h"
-#include "tx_api.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 #include "app_enc.h"
 #include "utils.h"
 #include "uvcl.h"
 #include "draw.h"
 
 #include "figs.h"
+
+#define FREERTOS_PRIORITY(p) ((UBaseType_t)((int)tskIDLE_PRIORITY + configMAX_PRIORITIES / 2 + (p)))
 
 #define CACHE_OP(__op__) do { \
   if (is_cache_enable()) { \
@@ -91,8 +95,10 @@ typedef struct {
 } box_t;
 
 typedef struct {
-  TX_SEMAPHORE free;
-  TX_SEMAPHORE ready;
+  SemaphoreHandle_t free;
+  StaticSemaphore_t free_buffer;
+  SemaphoreHandle_t ready;
+  StaticSemaphore_t ready_buffer;
   int buffer_nb;
   uint8_t *buffers[BQUEUE_MAX_BUFFERS];
   int free_idx;
@@ -115,13 +121,16 @@ typedef struct {
 /* display */
 static DRAW_Font_t font_12;
 static DRAW_Font_t font_16;
-static TX_MUTEX stat_info_lock;
+static SemaphoreHandle_t stat_info_lock;
+static StaticSemaphore_t stat_info_lock_buffer;
 static stat_info_t stat_info;
 static cpuload_info_t cpu_load;
 
 /* dma2d */
-static TX_MUTEX dma2d_lock;
-static TX_SEMAPHORE dma2d_sem;
+static SemaphoreHandle_t dma2d_lock;
+static StaticSemaphore_t dma2d_lock_buffer;
+static SemaphoreHandle_t dma2d_sem;
+static StaticSemaphore_t dma2d_sem_buffer;
 /* Store current DMA2D_HandleTypeDef instance so we can propagate to irq handler */
 static DMA2D_HandleTypeDef *dma2d_current;
 
@@ -150,16 +159,14 @@ static volatile int buffer_flying;
 static int force_intra;
 
  /* threads */
-  /* nn thread */
-static TX_THREAD nn_thread;
-static uint8_t nn_tread_stack[4096];
-  /* display thread */
-static TX_THREAD dp_thread;
-static uint8_t dp_tread_stack[4096];
-  /* isp thread */
-static TX_THREAD isp_thread;
-static uint8_t isp_tread_stack[4096];
-static TX_SEMAPHORE isp_sem;
+static StaticTask_t nn_thread;
+static StackType_t nn_thread_stack[2 * configMINIMAL_STACK_SIZE];
+static StaticTask_t dp_thread;
+static StackType_t dp_thread_stack[2 *configMINIMAL_STACK_SIZE];
+static StaticTask_t isp_thread;
+static StackType_t isp_thread_stack[2 *configMINIMAL_STACK_SIZE];
+static SemaphoreHandle_t isp_sem;
+static StaticSemaphore_t isp_sem_buffer;
 
 static int is_cache_enable()
 {
@@ -177,19 +184,11 @@ static void cpuload_init(cpuload_info_t *cpu_load)
 
 static void cpuload_update(cpuload_info_t *cpu_load)
 {
-  EXECUTION_TIME thread_total;
-  EXECUTION_TIME isr;
-  EXECUTION_TIME idle;
   int i;
 
   cpu_load->history[1] = cpu_load->history[0];
-
-  _tx_execution_thread_total_time_get(&thread_total);
-  _tx_execution_isr_time_get(&isr);
-  _tx_execution_idle_time_get(&idle);
-
-  cpu_load->history[0].total = thread_total + isr + idle;
-  cpu_load->history[0].thread = thread_total;
+  cpu_load->history[0].total = portGET_RUN_TIME_COUNTER_VALUE();
+  cpu_load->history[0].thread = cpu_load->history[0].total - ulTaskGetIdleRunTimeCounter();
   cpu_load->history[0].tick = HAL_GetTick();
 
   if (cpu_load->history[1].tick - cpu_load->history[2].tick < 1000)
@@ -215,34 +214,45 @@ static void cpuload_get_info(cpuload_info_t *cpu_load, float *cpu_load_last, flo
 
 static void time_stat_update(time_stat_t *p_stat, int value)
 {
-  tx_mutex_get(&stat_info_lock, TX_WAIT_FOREVER);
+  int ret;
+
+  ret = xSemaphoreTake(stat_info_lock, portMAX_DELAY);
+  assert(ret == pdTRUE);
+
   p_stat->last = value;
   p_stat->acc += value;
   p_stat->total++;
   p_stat->mean = (float)p_stat->acc / p_stat->total;
-  tx_mutex_put(&stat_info_lock);
+
+  ret = xSemaphoreGive(stat_info_lock);
+  assert(ret == pdTRUE);
 }
 
 static void stat_info_copy(stat_info_t *copy)
 {
-  tx_mutex_get(&stat_info_lock, TX_WAIT_FOREVER);
+  int ret;
+
+  ret = xSemaphoreTake(stat_info_lock, portMAX_DELAY);
+  assert(ret == pdTRUE);
+
   *copy = stat_info;
-  tx_mutex_put(&stat_info_lock);
+
+  ret = xSemaphoreGive(stat_info_lock);
+  assert(ret == pdTRUE);
 }
 
 static int bqueue_init(bqueue_t *bq, int buffer_nb, uint8_t **buffers)
 {
-  int ret;
   int i;
 
   if (buffer_nb > BQUEUE_MAX_BUFFERS)
     return -1;
 
-  ret = tx_semaphore_create(&bq->free, NULL, buffer_nb);
-  if (ret)
+  bq->free = xSemaphoreCreateCountingStatic(buffer_nb, buffer_nb, &bq->free_buffer);
+  if (!bq->free)
     goto free_sem_error;
-  ret = tx_semaphore_create(&bq->ready, NULL, 0);
-  if (ret)
+  bq->ready = xSemaphoreCreateCountingStatic(buffer_nb, 0, &bq->ready_buffer);
+  if (!bq->ready)
     goto ready_sem_error;
 
   bq->buffer_nb = buffer_nb;
@@ -256,7 +266,7 @@ static int bqueue_init(bqueue_t *bq, int buffer_nb, uint8_t **buffers)
   return 0;
 
 ready_sem_error:
-  tx_semaphore_delete(&bq->free);
+  vSemaphoreDelete(bq->free);
 free_sem_error:
   return -1;
 }
@@ -266,10 +276,9 @@ static uint8_t *bqueue_get_free(bqueue_t *bq, int is_blocking)
   uint8_t *res;
   int ret;
 
-  ret = tx_semaphore_get(&bq->free, is_blocking ? TX_WAIT_FOREVER : TX_NO_WAIT);
-  if (ret == TX_NO_INSTANCE)
+  ret = xSemaphoreTake(bq->free, is_blocking ? portMAX_DELAY : 0);
+  if (ret == pdFALSE)
     return NULL;
-  assert(ret == 0);
 
   res = bq->buffers[bq->free_idx];
   bq->free_idx = (bq->free_idx + 1) % bq->buffer_nb;
@@ -281,8 +290,8 @@ static void bqueue_put_free(bqueue_t *bq)
 {
   int ret;
 
-  ret = tx_semaphore_put(&bq->free);
-  assert(ret == 0);
+  ret = xSemaphoreGive(bq->free);
+  assert(ret == pdTRUE);
 }
 
 static uint8_t *bqueue_get_ready(bqueue_t *bq)
@@ -290,8 +299,8 @@ static uint8_t *bqueue_get_ready(bqueue_t *bq)
   uint8_t *res;
   int ret;
 
-  ret = tx_semaphore_get(&bq->ready, TX_WAIT_FOREVER);
-  assert(ret == 0);
+  ret = xSemaphoreTake(bq->ready, portMAX_DELAY);
+  assert(ret == pdTRUE);
 
   res = bq->buffers[bq->ready_idx];
   bq->ready_idx = (bq->ready_idx + 1) % bq->buffer_nb;
@@ -301,10 +310,17 @@ static uint8_t *bqueue_get_ready(bqueue_t *bq)
 
 static void bqueue_put_ready(bqueue_t *bq)
 {
+  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   int ret;
 
-  ret = tx_semaphore_put(&bq->ready);
-  assert(ret == 0);
+  if (xPortIsInsideInterrupt()) {
+    ret = xSemaphoreGiveFromISR(bq->ready, &xHigherPriorityTaskWoken);
+    assert(ret == pdTRUE);
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+  } else {
+    ret = xSemaphoreGive(bq->ready);
+    assert(ret == pdTRUE);
+  }
 }
 
 static void app_main_pipe_frame_event()
@@ -337,13 +353,15 @@ static void app_ancillary_pipe_frame_event()
 
 static void app_main_pipe_vsync_event()
 {
+  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   int ret;
 
-  ret = tx_semaphore_put(&isp_sem);
-  assert(ret == 0);
+  ret = xSemaphoreGiveFromISR(isp_sem, &xHigherPriorityTaskWoken);
+  if (ret == pdTRUE)
+    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
-static void nn_thread_fct(ULONG arg)
+static void nn_thread_fct(void *arg)
 {
   const LL_Buffer_InfoTypeDef *nn_out_info = LL_ATON_Output_Buffers_Info_Default();
   const LL_Buffer_InfoTypeDef *nn_in_info = LL_ATON_Input_Buffers_Info_Default();
@@ -627,7 +645,7 @@ static int display_new_frame(od_pp_out_t *pp_out)
   return uvc_is_active_local;
 }
 
-static void dp_thread_fct(ULONG arg)
+static void dp_thread_fct(void *arg)
 {
 #if POSTPROCESS_TYPE == POSTPROCESS_OD_YOLO_V2_UF
   yolov2_pp_static_param_t pp_params;
@@ -674,13 +692,13 @@ static void dp_thread_fct(ULONG arg)
   }
 }
 
-static void isp_thread_fct(ULONG arg)
+static void isp_thread_fct(void *arg)
 {
   int ret;
 
   while (1) {
-    ret = tx_semaphore_get(&isp_sem, TX_WAIT_FOREVER);
-    assert(ret == 0);
+    ret = xSemaphoreTake(isp_sem, portMAX_DELAY);
+    assert(ret == pdTRUE);
 
     CAM_IspUpdate();
   }
@@ -707,12 +725,12 @@ static void app_uvc_frame_release(struct uvcl_callbacks *cbs, void *frame)
 
 void app_run()
 {
-  const UINT isp_priority = TX_MAX_PRIORITIES / 2 - 2;
-  const UINT dp_priority = TX_MAX_PRIORITIES / 2 + 2;
-  const UINT nn_priority = TX_MAX_PRIORITIES / 2 - 1;
-  const ULONG time_slice = 10;
+  UBaseType_t isp_priority = FREERTOS_PRIORITY(2);
+  UBaseType_t dp_priority = FREERTOS_PRIORITY(-2);
+  UBaseType_t nn_priority = FREERTOS_PRIORITY(1);
   UVCL_Conf_t uvcl_conf = { 0 };
   ENC_Conf_t enc_conf = { 0 };
+  TaskHandle_t hdl;
   int ret;
 
   printf("Init application\n");
@@ -761,28 +779,28 @@ void app_run()
   ret = UVCL_Init(USB1_OTG_HS, &uvcl_conf, &uvcl_cbs);
 
   /* sems + mutex init */
-  ret = tx_semaphore_create(&isp_sem, NULL, 0);
-  assert(ret == 0);
-  ret = tx_semaphore_create(&dma2d_sem, NULL, 0);
-  assert(ret == 0);
-  ret = tx_mutex_create(&dma2d_lock, NULL, TX_INHERIT);
-  assert(ret == TX_SUCCESS);
-  ret = tx_mutex_create(&stat_info_lock, NULL, TX_INHERIT);
-  assert(ret == TX_SUCCESS);
+  isp_sem = xSemaphoreCreateCountingStatic(1, 0, &isp_sem_buffer);
+  assert(isp_sem);
+  dma2d_sem = xSemaphoreCreateCountingStatic(1, 0, &dma2d_sem_buffer);
+  assert(dma2d_sem);
+  dma2d_lock = xSemaphoreCreateMutexStatic(&dma2d_lock_buffer);
+  assert(dma2d_lock);
+  stat_info_lock = xSemaphoreCreateMutexStatic(&stat_info_lock_buffer);
+  assert(stat_info_lock);
 
   /* Start LCD Display camera pipe stream */
   CAM_DisplayPipe_Start(capture_buffer[0], CMW_MODE_CONTINUOUS);
 
   /* threads init */
-  ret = tx_thread_create(&nn_thread, "nn", nn_thread_fct, 0, nn_tread_stack,
-                         sizeof(nn_tread_stack), nn_priority, nn_priority, time_slice, TX_AUTO_START);
-  assert(ret == TX_SUCCESS);
-  ret = tx_thread_create(&dp_thread, "dp", dp_thread_fct, 0, dp_tread_stack,
-                         sizeof(dp_tread_stack), dp_priority, dp_priority, time_slice, TX_AUTO_START);
-  assert(ret == TX_SUCCESS);
-  ret = tx_thread_create(&isp_thread, "isp", isp_thread_fct, 0, isp_tread_stack,
-                         sizeof(isp_tread_stack), isp_priority, isp_priority, time_slice, TX_AUTO_START);
-  assert(ret == TX_SUCCESS);
+  hdl = xTaskCreateStatic(nn_thread_fct, "nn", configMINIMAL_STACK_SIZE * 2, NULL, nn_priority, nn_thread_stack,
+                          &nn_thread);
+  assert(hdl != NULL);
+  hdl = xTaskCreateStatic(dp_thread_fct, "dp", configMINIMAL_STACK_SIZE * 2, NULL, dp_priority, dp_thread_stack,
+                          &dp_thread);
+  assert(hdl != NULL);
+  hdl = xTaskCreateStatic(isp_thread_fct, "isp", configMINIMAL_STACK_SIZE * 2, NULL, isp_priority, isp_thread_stack,
+                          &isp_thread);
+  assert(hdl != NULL);
 
   BSP_LED_On(LED_GREEN);
 }
@@ -807,29 +825,39 @@ int CMW_CAMERA_PIPE_VsyncEventCallback(uint32_t pipe)
 
 void DRAW_HwLock(void *dma2d_handle)
 {
-  tx_mutex_get(&dma2d_lock, TX_WAIT_FOREVER);
+  int ret;
+
+  ret = xSemaphoreTake(dma2d_lock, portMAX_DELAY);
+  assert(ret == pdTRUE);
+
   dma2d_current = dma2d_handle;
 }
 
 void DRAW_HwUnlock()
 {
-  tx_mutex_put(&dma2d_lock);
+  int ret;
+
+  ret = xSemaphoreGive(dma2d_lock);
+  assert(ret == pdTRUE);
 }
 
 void DRAW_Wfe()
 {
   int ret;
 
-  ret = tx_semaphore_get(&dma2d_sem, TX_WAIT_FOREVER);
-  assert(ret == 0);
+  ret = xSemaphoreTake(dma2d_sem, portMAX_DELAY);
+  assert(ret == pdTRUE);
 }
 
 void DRAW_Signal()
 {
+  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   int ret;
 
-  ret = tx_semaphore_put(&dma2d_sem);
-  assert(ret == 0);
+  ret = xSemaphoreGiveFromISR(dma2d_sem, &xHigherPriorityTaskWoken);
+  assert(ret == pdTRUE);
+
+  portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 
 void DMA2D_IRQHandler(void)

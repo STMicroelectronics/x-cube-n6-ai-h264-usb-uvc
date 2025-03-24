@@ -36,6 +36,7 @@ enum {
 };
 
 static uint8_t venc_hw_allocator_buffer[VENC_ALLOCATOR_SIZE] ALIGN_32 IN_PSRAM;
+static uint8_t *venc_hw_allocator_pos = venc_hw_allocator_buffer;
 static struct VENC_Context {
   H264EncInst hdl;
   int is_sps_pps_done;
@@ -283,13 +284,17 @@ void *EWLcalloc(u32 n, u32 s)
   return res;
 }
 
-void EWLPoolChoiceCb(uint8_t **pool_ptr, size_t *size)
+/* Implement simple EWLMallocLinear. No dealloc supported */
+i32 EWLMallocLinear(const void *instance, u32 size, EWLLinearMem_t *info)
 {
-  *pool_ptr = venc_hw_allocator_buffer;
-  *size = VENC_ALLOCATOR_SIZE;
-}
+  if (venc_hw_allocator_pos + size > venc_hw_allocator_buffer + VENC_ALLOCATOR_SIZE)
+    return -1;
 
-void EWLPoolReleaseCb(uint8_t **pool_ptr)
-{
-  ;
+  info->size = size;
+  info->virtualAddress = (u32 *) venc_hw_allocator_pos;
+  info->busAddress = (ptr_t)info->virtualAddress;
+
+  venc_hw_allocator_pos += size;
+
+  return 0;
 }

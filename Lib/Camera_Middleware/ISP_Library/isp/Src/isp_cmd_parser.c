@@ -61,12 +61,17 @@ typedef enum {
   ISP_CMD_GAMMA                = 0x17,
   ISP_CMD_SENSORINFO           = 0x18,
   ISP_CMD_SENSORTESTPATTERN    = 0x19,
+  ISP_CMD_SENSORDELAY          = 0x1A,
+  ISP_CMD_SENSORDELAYMEASURE   = 0x1B,
+  ISP_CMD_FIRMWARECONFIG       = 0x1C,
   /* Application API commands */
   ISP_CMD_USER_EXPOSURETARGET  = 0x80,
   ISP_CMD_USER_LISTWBREFMODES  = 0x81,
   ISP_CMD_USER_WBREFMODE       = 0x82,
   ISP_CMD_USER_GETDECIMATION   = 0x83,
   ISP_CMD_USER_STATISTICAREA   = 0x84,
+  /* Metadata output command */
+  ISP_CMD_METADATA_OUTPUT      = 0xFF,
 } ISP_CMD_ID_TypeDef;
 
 typedef struct
@@ -234,6 +239,30 @@ typedef struct
   ISP_SensorInfoTypeDef data;
 } ISP_CMD_SensorInfoTypeDef;
 
+typedef struct
+{
+  ISP_CMD_HeaderTypeDef header;
+  ISP_SensorDelayTypeDef data;
+} ISP_CMD_SensorDelayTypeDef;
+
+typedef struct
+{
+  ISP_CMD_HeaderTypeDef header;
+  ISP_SensorDelayTypeDef data;
+} ISP_CMD_SensorDelayMeasureTypeDef;
+
+typedef struct
+{
+  ISP_CMD_HeaderTypeDef header;
+  ISP_FirmwareConfigTypeDef data;
+} ISP_CMD_FirmwareConfigTypeDef;
+
+typedef struct
+{
+  ISP_CMD_HeaderTypeDef header;
+  uint8_t enable;
+} ISP_CMD_MetadataOutputTypeDef;
+
 typedef union {
   ISP_CMD_BaseTypeDef              base;
   ISP_CMD_StatRemovalTypeDef       statRemoval;
@@ -261,6 +290,10 @@ typedef union {
   ISP_CMD_GammaTypeDef             gamma;
   ISP_CMD_SensorInfoTypeDef        sensorInfo;
   ISP_CMD_SensorTestPatternTypeDef sensorTestPattern;
+  ISP_CMD_SensorDelayTypeDef       sensorDelay;
+  ISP_CMD_SensorDelayMeasureTypeDef sensorDelayMeasure;
+  ISP_CMD_FirmwareConfigTypeDef    firmwareConfig;
+  ISP_CMD_MetadataOutputTypeDef    metadataOutput;
 } ISP_CMD_TypeDef;
 
 /* Private constants ---------------------------------------------------------*/
@@ -279,8 +312,8 @@ static ISP_StatusTypeDef ISP_CmdParser_StatDownCb(ISP_AlgoTypeDef *pAlgo);
 static ISP_SVC_StatStateTypeDef ISP_CmdParser_stats;
 
 extern uint32_t current_awb_profId;
+extern ISP_MetaTypeDef Meta;
 
-/* Private functions ---------------------------------------------------------*/
 /**
   * @brief  ISP_CmdParser_ProcessCommand
   *         Parse and process a command received from the remote IQ tuning tool
@@ -309,6 +342,28 @@ ISP_StatusTypeDef ISP_CmdParser_ProcessCommand(ISP_HandleTypeDef *hIsp, uint8_t 
   return ret;
 }
 
+/**
+  * @brief  ISP_CmdParser_SendSensorDelayMeasure
+  *         Send the answer to the Get SensorDelay measure command
+  * @param  hIsp: ISP device handle
+  * @param  pSensorDelay: Pointer to the measured Sensor Delay
+  * @retval operation result
+  */
+ISP_StatusTypeDef ISP_CmdParser_SendSensorDelayMeasure(ISP_HandleTypeDef *hIsp, ISP_SensorDelayTypeDef *pSensorDelay)
+{
+  ISP_CMD_TypeDef cmd = { 0 };
+
+  /* Send the answer command */
+  cmd.base.header.id = ISP_CMD_SENSORDELAYMEASURE;
+  cmd.base.header.operation = pSensorDelay->delay ? ISP_CMD_OP_GET_OK : ISP_CMD_OP_GET_FAILURE;
+  cmd.sensorDelayMeasure.data = *pSensorDelay;
+
+  ISP_ToolCom_SendData((uint8_t*)&cmd, sizeof(cmd), NULL, NULL);
+
+  return ISP_OK;
+}
+
+/* Private functions ---------------------------------------------------------*/
 /**
   * @brief  ISP_CmdParser_SetConfig
   *         Parse and process a "Set configuration" command
@@ -451,6 +506,7 @@ static ISP_StatusTypeDef ISP_CmdParser_SetConfig(ISP_HandleTypeDef *hIsp, uint8_
      * so that the algo will consider this update at its next process call
      */
     ret = ISP_SetExposureTarget(hIsp, c.AECAlgo.data.exposureCompensation);
+    IQParamConfig->AECAlgo.antiFlickerFreq = c.AECAlgo.data.antiFlickerFreq;
     break;
 
   case ISP_CMD_AWBALGO:
@@ -525,6 +581,16 @@ static ISP_StatusTypeDef ISP_CmdParser_SetConfig(ISP_HandleTypeDef *hIsp, uint8_
       IQParamConfig->gamma = c.gamma.data;
     }
     break;
+
+  case ISP_CMD_SENSORDELAY:
+    /* Update IQ params */
+    IQParamConfig->sensorDelay = c.sensorDelay.data;
+    break;
+
+  case ISP_CMD_METADATA_OUTPUT:
+    Meta.outputEnable = c.metadataOutput.enable;
+    break;
+
 
   default:
     ret = ISP_ERR_CMDPARSER_COMMAND;
@@ -695,6 +761,23 @@ static ISP_StatusTypeDef ISP_CmdParser_GetConfig(ISP_HandleTypeDef *hIsp, uint8_
     c.sensorInfo.data = hIsp->sensorInfo;
     break;
 
+  case ISP_CMD_SENSORDELAY:
+    c.sensorDelay.data = IQParamConfig->sensorDelay;
+    break;
+
+  case ISP_CMD_SENSORDELAYMEASURE:
+    /* Start the sensor delay measure. Answer will be sent later at the end of the measure */
+    ISP_SVC_Misc_SensorDelayMeasureStart();
+    break;
+
+  case ISP_CMD_FIRMWARECONFIG:
+    ret = ISP_SVC_Misc_GetFirmwareConfig(&c.firmwareConfig.data);
+    break;
+
+  case ISP_CMD_METADATA_OUTPUT:
+    c.metadataOutput.enable = Meta.outputEnable;
+    break;
+
   default:
     c.base.header.operation = ISP_CMD_OP_GET_FAILURE;
     ret = ISP_ERR_CMDPARSER_COMMAND;
@@ -714,9 +797,9 @@ static ISP_StatusTypeDef ISP_CmdParser_GetConfig(ISP_HandleTypeDef *hIsp, uint8_
   /* Free the received message just before sending the answer message */
   ISP_ToolCom_PrepareNextCommand();
 
-  if (!((cmd_id == ISP_CMD_STATISTICUP || cmd_id == ISP_CMD_STATISTICDOWN) && (ret == ISP_OK)))
+  if (!((cmd_id == ISP_CMD_STATISTICUP || cmd_id == ISP_CMD_STATISTICDOWN || cmd_id == ISP_CMD_SENSORDELAYMEASURE) && (ret == ISP_OK)))
   {
-    /* Send command answer (except for statistic where the answer is sent upon callback call */
+    /* Send command answer (except for statistic and SensorDelayMeasuer where the answer is sent upon callback call */
     ISP_ToolCom_SendData((uint8_t*)&c, sizeof(c), NULL, NULL);
   }
 

@@ -28,6 +28,8 @@
 #include "isp_param_conf.h"
 #endif
 
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+
 
 static int CMW_IMX335_GetResType(uint32_t width, uint32_t height, uint32_t*res)
 {
@@ -98,6 +100,45 @@ static int32_t CMW_IMX335_SetExposure(void *io_ctx, int32_t exposure)
   return IMX335_SetExposure(&((CMW_IMX335_t *)io_ctx)->ctx_driver, exposure);
 }
 
+/**
+  * @brief  Set the sensor white balance mode
+  * @param  io_ctx  pointer to component object
+  * @param  Automatic automatic mode enable/disable
+  * @param  RefColorTemp color temperature if automatic mode is disabled
+  * @retval Component status
+  */
+int32_t CMW_IMX335_SetWBRefMode(void *io_ctx, uint8_t Automatic, uint32_t RefColorTemp)
+{
+  int ret = CMW_ERROR_NONE;
+
+  ret = ISP_SetWBRefMode(&((CMW_IMX335_t *)io_ctx)->hIsp, Automatic, RefColorTemp);
+  if (ret)
+  {
+    return CMW_ERROR_PERIPH_FAILURE;
+  }
+
+  return CMW_ERROR_NONE;
+}
+
+/**
+  * @brief  List the sensor white balance modes
+  * @param  io_ctx  pointer to component object
+  * @param  RefColorTemp color temperature list
+  * @retval Component status
+  */
+int32_t CMW_IMX335_ListWBRefModes(void *io_ctx, uint32_t RefColorTemp[])
+{
+  int ret = CMW_ERROR_NONE;
+
+  ret = ISP_ListWBRefModes(&((CMW_IMX335_t *)io_ctx)->hIsp, RefColorTemp);
+  if (ret)
+  {
+    return CMW_ERROR_PERIPH_FAILURE;
+  }
+
+  return CMW_ERROR_NONE;
+}
+
 static int32_t CMW_IMX335_SetFrequency(void *io_ctx, int32_t frequency)
 {
   return IMX335_SetFrequency(&((CMW_IMX335_t *)io_ctx)->ctx_driver, frequency);
@@ -105,7 +146,13 @@ static int32_t CMW_IMX335_SetFrequency(void *io_ctx, int32_t frequency)
 
 static int32_t CMW_IMX335_SetFramerate(void *io_ctx, int32_t framerate)
 {
-  return IMX335_SetFramerate(&((CMW_IMX335_t *)io_ctx)->ctx_driver, framerate);
+  const int32_t available_imx335_fps[] = {10, 15, 20, 25, 30};
+
+  for (int i = 0; i < ARRAY_SIZE(available_imx335_fps); i++)
+    if (framerate == available_imx335_fps[i])
+      return IMX335_SetFramerate(&((CMW_IMX335_t *)io_ctx)->ctx_driver, framerate);
+
+  return CMW_ERROR_WRONG_PARAM;
 }
 
 static int32_t CMW_IMX335_SetMirrorFlip(void *io_ctx, uint32_t config)
@@ -180,9 +227,8 @@ static int32_t CMW_IMX335_Start(void *io_ctx)
   /* Statistic area is provided with null value so that it force the ISP Library to get the statistic
    * area information from the tuning file.
    */
-  ISP_StatAreaTypeDef isp_stat_area = {0};
   (void) ISP_IQParamCacheInit; /* unused */
-  ret = ISP_Init(&((CMW_IMX335_t *)io_ctx)->hIsp, ((CMW_IMX335_t *)io_ctx)->hdcmipp, 0, &((CMW_IMX335_t *)io_ctx)->appliHelpers, &isp_stat_area, &ISP_IQParamCacheInit_IMX335);
+  ret = ISP_Init(&((CMW_IMX335_t *)io_ctx)->hIsp, ((CMW_IMX335_t *)io_ctx)->hdcmipp, 0, &((CMW_IMX335_t *)io_ctx)->appliHelpers, &ISP_IQParamCacheInit_IMX335);
   if (ret != ISP_OK)
   {
     return CMW_ERROR_COMPONENT_FAILURE;
@@ -285,6 +331,8 @@ int CMW_IMX335_Probe(CMW_IMX335_t *io_ctx, CMW_Sensor_if_t *imx335_if)
   imx335_if->ReadID = CMW_IMX335_ReadID;
   imx335_if->SetGain = CMW_IMX335_SetGain;
   imx335_if->SetExposure = CMW_IMX335_SetExposure;
+  imx335_if->SetWBRefMode = CMW_IMX335_SetWBRefMode;
+  imx335_if->ListWBRefModes = CMW_IMX335_ListWBRefModes;
   imx335_if->SetFrequency = CMW_IMX335_SetFrequency;
   imx335_if->SetFramerate = CMW_IMX335_SetFramerate;
   imx335_if->SetMirrorFlip = CMW_IMX335_SetMirrorFlip;

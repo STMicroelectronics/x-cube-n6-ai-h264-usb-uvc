@@ -285,9 +285,8 @@ static int32_t CMW_VD66GY_Start(void *io_ctx)
   /* Statistic area is provided with null value so that it force the ISP Library to get the statistic
    * area information from the tuning file.
    */
-  ISP_StatAreaTypeDef isp_stat_area = {0};
   (void) ISP_IQParamCacheInit; /* unused */
-  ret = ISP_Init(&((CMW_VD66GY_t *)io_ctx)->hIsp, ((CMW_VD66GY_t *)io_ctx)->hdcmipp, 0, &((CMW_VD66GY_t *)io_ctx)->appliHelpers, &isp_stat_area, &ISP_IQParamCacheInit_VD66GY);
+  ret = ISP_Init(&((CMW_VD66GY_t *)io_ctx)->hIsp, ((CMW_VD66GY_t *)io_ctx)->hdcmipp, 0, &((CMW_VD66GY_t *)io_ctx)->appliHelpers, &ISP_IQParamCacheInit_VD66GY);
   if (ret != ISP_OK)
   {
     return CMW_ERROR_COMPONENT_FAILURE;
@@ -447,6 +446,45 @@ int32_t CMW_VD66GY_SetExposureMode(void *io_ctx, int32_t mode)
 }
 
 /**
+  * @brief  Set the sensor white balance mode
+  * @param  io_ctx  pointer to component object
+  * @param  Automatic automatic mode enable/disable
+  * @param  RefColorTemp color temperature if automatic mode is disabled
+  * @retval Component status
+  */
+int32_t CMW_VD66GY_SetWBRefMode(void *io_ctx, uint8_t Automatic, uint32_t RefColorTemp)
+{
+  int ret = CMW_ERROR_NONE;
+
+  ret = ISP_SetWBRefMode(&((CMW_VD66GY_t *)io_ctx)->hIsp, Automatic, RefColorTemp);
+  if (ret)
+  {
+    return CMW_ERROR_PERIPH_FAILURE;
+  }
+
+  return CMW_ERROR_NONE;
+}
+
+/**
+  * @brief  List the sensor white balance modes
+  * @param  io_ctx  pointer to component object
+  * @param  RefColorTemp color temperature list
+  * @retval Component status
+  */
+int32_t CMW_VD66GY_ListWBRefModes(void *io_ctx, uint32_t RefColorTemp[])
+{
+  int ret = CMW_ERROR_NONE;
+
+  ret = ISP_ListWBRefModes(&((CMW_VD66GY_t *)io_ctx)->hIsp, RefColorTemp);
+  if (ret)
+  {
+    return CMW_ERROR_PERIPH_FAILURE;
+  }
+
+  return CMW_ERROR_NONE;
+}
+
+/**
   * @brief  Get the sensor info
   * @param  pObj  pointer to component object
   * @param  pInfo pointer to sensor info structure
@@ -581,7 +619,7 @@ int CMW_VD66GY_Probe(CMW_VD66GY_t *io_ctx, CMW_Sensor_if_t *vd6g_if)
 
   io_ctx->ctx_driver.shutdown_pin = VD6G_ShutdownPin;
   io_ctx->ctx_driver.read8 = VD6G_Read8;
-  io_ctx->ctx_driver.read16 =VD6G_Read16;
+  io_ctx->ctx_driver.read16 = VD6G_Read16;
   io_ctx->ctx_driver.read32 = VD6G_Read32;
   io_ctx->ctx_driver.write8 = VD6G_Write8;
   io_ctx->ctx_driver.write16 = VD6G_Write16;
@@ -619,6 +657,8 @@ int CMW_VD66GY_Probe(CMW_VD66GY_t *io_ctx, CMW_Sensor_if_t *vd6g_if)
   vd6g_if->SetGain = CMW_VD66GY_SetGain;
   vd6g_if->SetExposure = CMW_VD66GY_SetExposure;
   vd6g_if->SetExposureMode = CMW_VD66GY_SetExposureMode;
+  vd6g_if->SetWBRefMode = CMW_VD66GY_SetWBRefMode;
+  vd6g_if->ListWBRefModes = CMW_VD66GY_ListWBRefModes;
   vd6g_if->GetSensorInfo = CMW_VD66GY_GetSensorInfo;
   return ret;
 }

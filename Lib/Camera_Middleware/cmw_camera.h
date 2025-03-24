@@ -101,6 +101,8 @@ int32_t CMW_CAMERA_DeInit();
 int32_t CMW_CAMERA_Run();
 int32_t CMW_CAMERA_SetPipeConfig(uint32_t pipe, CMW_DCMIPP_Conf_t *p_conf, uint32_t *pitch);
 int32_t CMW_CAMERA_GetSensorName(CMW_Sensor_Name_t *sensorName);
+int32_t CMW_CAMERA_SetWBRefMode(uint8_t Automatic, uint32_t RefColorTemp);
+int32_t CMW_CAMERA_ListWBRefModes(uint32_t RefColorTemp[]);
 
 int32_t CMW_CAMERA_Start(uint32_t pipe, uint8_t *pbuff, uint32_t Mode);
 int32_t CMW_CAMERA_DoubleBufferStart(uint32_t pipe, uint8_t *pbuff1, uint8_t *pbuff2, uint32_t Mode);
