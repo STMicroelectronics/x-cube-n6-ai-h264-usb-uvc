@@ -44,6 +44,10 @@ Computer Vision AI H264 UVC application using "TinyYOLOv2" model for people dete
 
 ## Update history
 
+### V2.2.1 / September 2026
+
+- Fix STM32_SigningTool_CLI API break since v2.21 by adding `--align` flag
+
 ### V2.2.0 / January 2026
 
 - Update the STM32CubeN6 Firmware Package to version 1.3.0.
